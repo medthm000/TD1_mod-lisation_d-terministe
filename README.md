@@ -1,41 +1,41 @@
-# تحليل السلاسل الزمنية - المبيعات الفصلية
+# Time Series Analysis - Quarterly Sales
 
-## Analyse des Séries Chronologiques - Ventes Trimestrielles
+## Interactive Application for Time Series Analysis
 
-تطبيق تفاعلي لتحليل السلاسل الزمنية للمبيعات الفصلية من 2018 إلى 2021 مع توقعات 2022.
+An interactive application for analyzing quarterly sales data from 2018 to 2021 with 2022 forecasts.
 
-### المميزات:
-- 📊 عرض البيانات الأصلية
-- 📈 مقارنة طرق تقدير الاتجاه (المربعات الصغرى، نصف المتوسط)
-- 📉 المتوسط المتحرك
-- 🔄 المعاملات الموسمية
-- ✨ السلسلة المقدرة
-- 📋 البقايا (التغيرات العرضية)
-- 🔧 السلسلة المصححة موسمياً (CVS)
-- 🔮 توقعات 2022
+### Features:
+- 📊 Display original data
+- 📈 Compare trend estimation methods (least squares, semi-average)
+- 📉 Moving average
+- 🔄 Seasonal coefficients
+- ✨ Estimated series
+- 📋 Residuals (accidental variations)
+- 🔧 Seasonally adjusted series (CVS)
+- 🔮 2022 forecasts
 
-### كيفية التشغيل محلياً:
+### How to Run Locally:
 
 ```bash
-# تثبيت التبعيات
+# Install dependencies
 npm install
 
-# تشغيل خادم التطوير
+# Run development server
 npm run dev
 ```
 
-ثم افتح [http://localhost:3000](http://localhost:3000) في المتصفح.
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### النشر على Vercel:
+### Deploy on Vercel:
 
-1. ارفع المشروع على GitHub
-2. اذهب إلى [vercel.com](https://vercel.com)
-3. اربط حساب GitHub
-4. اختر المستودع
-5. انقر على "Deploy"
+1. Upload the project to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Connect your GitHub account
+4. Select the repository
+5. Click "Deploy"
 
 ---
 
-**Pr. Soumaya FELLAJI - Année universitaire 2025/2026**
+**Prof. Soumaya FELLAJI - Academic Year 2025/2026**
 
 **Project managed by Mohamed Reda Touhami**

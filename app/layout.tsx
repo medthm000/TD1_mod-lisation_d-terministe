@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Analyse des Séries Chronologiques",
-  description: "Analyse des Séries Chronologiques - Ventes Trimestrielles",
+  title: "Time Series Analysis - Quarterly Sales",
+  description: "Time Series Analysis - Quarterly Sales",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
