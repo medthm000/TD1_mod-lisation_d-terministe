@@ -488,20 +488,6 @@ const TimeSeriesAnalysis = () => {
   const [showReestimated, setShowReestimated] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showFormulas, setShowFormulas] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Avoid rendering chart components during SSR/SSG where DOM APIs are unavailable
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50 flex items-center justify-center text-indigo-900">
-        Loading…
-      </div>
-    );
-  }
 
   const t = translations[language];
 
