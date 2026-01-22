@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell, AreaChart, Area } from 'recharts';
 
 type Language = 'fr' | 'en';
@@ -487,6 +487,20 @@ const TimeSeriesAnalysis = () => {
   const [showReestimated, setShowReestimated] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showFormulas, setShowFormulas] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Avoid rendering chart components during SSR/SSG where DOM APIs are unavailable
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50 flex items-center justify-center text-indigo-900">
+        Loading…
+      </div>
+    );
+  }
 
   const t = translations[language];
 
@@ -1210,36 +1224,38 @@ const TimeSeriesAnalysis = () => {
               </div>
             )}
           </div>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 shadow-lg">
-                <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">{t.mainFormulas}</h4>
-                <div className="space-y-2 text-sm">
-                  <p><strong>Trend (Least Squares):</strong> Tt = {trendB.toFixed(3)} + {trendA.toFixed(3)}t</p>
-                  <p><strong>Model:</strong> Yt = Tt × St × εt</p>
-                  <p><strong>Estimated series:</strong> Ŷt = Tt × St</p>
-                  <p><strong>Residuals:</strong> εt = Yt / Ŷt</p>
-                  <p><strong>CVS:</strong> CVSt = Yt / St</p>
-                  <p><strong>Re-estimated Trend (CVS):</strong> Tt = {reestimatedTrend.b.toFixed(2)} + {reestimatedTrend.a.toFixed(2)}t</p>
-                </div>
-              </div>
 
-              <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-4 rounded-xl border-2 border-emerald-200 shadow-lg">
-                <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-green-700">{t.forecasts2022} (Ŷt = Tt × St)</h4>
-                <div className="space-y-1 text-sm">
-                  <p className="font-semibold text-indigo-700">Original trend</p>
-                  {forecastsOriginal.map(f => (
-                    <p key={`o-${f.quarter}`}><strong>{f.quarter}:</strong> {f.forecast} units</p>
-                  ))}
-                  {showReestimated && (
-                    <div className="mt-2">
-                      <p className="font-semibold text-purple-700">Re-estimated trend (CVS)</p>
-                      {forecastsReestimated.map(f => (
-                        <p key={`r-${f.quarter}`}><strong>{f.quarter}:</strong> {f.forecast} units</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 shadow-lg">
+              <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">{t.mainFormulas}</h4>
+              <div className="space-y-2 text-sm">
+                <p><strong>Trend (Least Squares):</strong> Tt = {trendB.toFixed(3)} + {trendA.toFixed(3)}t</p>
+                <p><strong>Model:</strong> Yt = Tt × St × εt</p>
+                <p><strong>Estimated series:</strong> Ŷt = Tt × St</p>
+                <p><strong>Residuals:</strong> εt = Yt / Ŷt</p>
+                <p><strong>CVS:</strong> CVSt = Yt / St</p>
+                <p><strong>Re-estimated Trend (CVS):</strong> Tt = {reestimatedTrend.b.toFixed(2)} + {reestimatedTrend.a.toFixed(2)}t</p>
               </div>
             </div>
+
+            <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-4 rounded-xl border-2 border-emerald-200 shadow-lg">
+              <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-green-700">{t.forecasts2022} (Ŷt = Tt × St)</h4>
+              <div className="space-y-1 text-sm">
+                <p className="font-semibold text-indigo-700">Original trend</p>
+                {forecastsOriginal.map(f => (
+                  <p key={`o-${f.quarter}`}><strong>{f.quarter}:</strong> {f.forecast} units</p>
+                ))}
+                {showReestimated && (
+                  <div className="mt-2">
+                    <p className="font-semibold text-purple-700">Re-estimated trend (CVS)</p>
+                    {forecastsReestimated.map(f => (
+                      <p key={`r-${f.quarter}`}><strong>{f.quarter}:</strong> {f.forecast} units</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
