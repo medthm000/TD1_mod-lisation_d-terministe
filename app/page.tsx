@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell, AreaChart, Area } from 'recharts';
 
 type Language = 'fr' | 'en';
@@ -1898,6 +1899,5 @@ const TimeSeriesAnalysis = () => {
   );
 };
 
-export default function Home() {
-  return <TimeSeriesAnalysis />;
-}
+// Disable SSR for this heavy client-only page to avoid hydration issues
+export default dynamic(() => Promise.resolve(TimeSeriesAnalysis), { ssr: false });
