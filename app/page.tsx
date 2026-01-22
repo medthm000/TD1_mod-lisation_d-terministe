@@ -891,16 +891,13 @@ const TimeSeriesAnalysis = () => {
           <div>
             <h2 className="text-2xl font-bold mb-4 text-indigo-800">Residuals - Random Component (εt)</h2>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={estimatedData}>
+              <BarChart data={showReestimated ? [...estimatedData, ...reestimatedData.map(d => ({ ...d, label: `${d.label} (re)` }))] : estimatedData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="label" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="residualRatio" fill="#8b5cf6" name="Residual Ratio (εt = Yt/Ŷt)" />
-                {showReestimated && (
-                  <Bar dataKey="residualRatio" data={reestimatedData} fill="#7c3aed" name="Residual Ratio (Re-estimated)" />
-                )}
               </BarChart>
             </ResponsiveContainer>
             
