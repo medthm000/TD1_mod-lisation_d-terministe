@@ -3,6 +3,8 @@
 import React, { useMemo, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell, AreaChart, Area } from 'recharts';
 
+type Language = 'fr' | 'en';
+
 type QuarterId = 'T1' | 'T2' | 'T3' | 'T4';
 
 type SeasonalMethodName = 'simple-averages' | 'ratio-to-trend' | 'ratio-to-moving-average';
@@ -14,6 +16,123 @@ interface SeasonalMethod {
   product: number;
   correctionFactor: number;
   accuracy: AccuracyMetrics;
+}
+
+interface Translations {
+  title: string;
+  seasonalMethod: string;
+  seasonalMethodInfo: string;
+  productLabel: string;
+  correctionLabel: string;
+  originalAccuracy: string;
+  originalAccuracyInfo: string;
+  reestimatedModel: string;
+  reestimatedModelInfo: string;
+  showLabel: string;
+  trendLabel: string;
+  hideTable: string;
+  showTable: string;
+  calculationTable: string;
+  exportCSV: string;
+  copy: string;
+  year: string;
+  quarter: string;
+  sales: string;
+  trend: string;
+  seasonalIndex: string;
+  estimated: string;
+  residualRatio: string;
+  seasonalIndices: string;
+  modelAccuracy: string;
+  meanAbsoluteError: string;
+  meanSquaredError: string;
+  rootMeanSquaredError: string;
+  mainFormulas: string;
+  multiplicativeModel: string;
+  model: string;
+  estimatedSeries: string;
+  residuals: string;
+  cvs: string;
+  forecasts2022: string;
+  originalData: string;
+  trendComparison: string;
+  movingAverage: string;
+  seasonalCoefficients: string;
+  accuracyComparison: string;
+  estimatedSeriesTab: string;
+  residualsTab: string;
+  cvsSeriesTab: string;
+  forecastTab: string;
+  comments: string;
+  interpretation: string;
+  units: string;
+  confidenceInterval: string;
+  method: string;
+  status: string;
+  selected: string;
+  bestMAE: string;
+  simpleAverages: string;
+  ratioToTrend: string;
+  ratioToMovingAverage: string;
+  quarterlySales: string;
+  clearUpwardTrend: string;
+  strongSeasonalPattern: string;
+  q3HighestSales: string;
+  q1LowestSales: string;
+  seasonalAmplitude: string;
+  ratioStable: string;
+  trendEstimation: string;
+  leastSquares: string;
+  semiAverage: string;
+  actualSales: string;
+  centeredMA: string;
+  forQuarterlyData: string;
+  eliminatesSeasonal: string;
+  seasonalIndicesComparison: string;
+  product: string;
+  correction: string;
+  interpretationMultiplicative: string;
+  aboveAverage: string;
+  belowAverage: string;
+  noSeasonalEffect: string;
+  methodLabel: string;
+  accuracyComparisonAll: string;
+  bias: string;
+  originalModelAcc: string;
+  selectedMethodLabel: string;
+  reestimatedModelAcc: string;
+  trendRefitted: string;
+  betterFitCVS: string;
+  originalMoreAccurate: string;
+  interpretationLabel: string;
+  biasExplanation: string;
+  maeExplanation: string;
+  mseExplanation: string;
+  rmseExplanation: string;
+  lowerValues: string;
+  estimatedVsActual: string;
+  multiplicativeEquation: string;
+  estimatedSeriesFormula: string;
+  whereLabel: string;
+  modelAccuracyLabel: string;
+  residualsRandomComponent: string;
+  multiplicativeResiduals: string;
+  residualsRepresent: string;
+  interpretationResiduals: string;
+  higherThanPredicted: string;
+  lowerThanPredicted: string;
+  perfectPrediction: string;
+  seasonallyAdjusted: string;
+  multiplicativeDeseasonalization: string;
+  cvsSeriesRemoves: string;
+  purposeLabel: string;
+  allowsComparison: string;
+  forecasts2022Title: string;
+  forecastFormula: string;
+  linearTrend: string;
+  seasonalIndexFor: string;
+  footerLine1: string;
+  footerLine2: string;
 }
 
 interface AccuracyMetrics {
@@ -47,12 +166,250 @@ interface Forecast {
   upperCI?: number;
 }
 
+const translations: Record<Language, Translations> = {
+  fr: {
+    title: "Analyse de Séries Temporelles - Ventes Trimestrielles (Modèle Multiplicatif)",
+    seasonalMethod: "Méthode saisonnière",
+    seasonalMethodInfo: "Sélectionnez la méthode de décomposition saisonnière",
+    productLabel: "Produit",
+    correctionLabel: "Facteur de correction",
+    originalAccuracy: "Précision du modèle original",
+    originalAccuracyInfo: "Métriques d'erreur pour le modèle basé sur la tendance originale",
+    reestimatedModel: "Modèle ré-estimé (CVS)",
+    reestimatedModelInfo: "Modèle ré-estimé après désaisonnalisation",
+    showLabel: "afficher",
+    trendLabel: "Tendance (CVS)",
+    hideTable: "🔼 Masquer le tableau de calcul",
+    showTable: "🔽 Afficher le tableau de calcul complet",
+    calculationTable: "Tableau Récapitulatif des Calculs - Modèle Multiplicatif",
+    exportCSV: "📥 Exporter CSV",
+    copy: "📋 Copier",
+    year: "Année",
+    quarter: "Trimestre",
+    sales: "Ventes (Yt)",
+    trend: "Tendance (Tt)",
+    seasonalIndex: "Indice Saisonnier (St)",
+    estimated: "Estimé (Ŷt = Tt×St)",
+    residualRatio: "Ratio Résiduel (εt)",
+    cvs: "CVS (Yt/St)",
+    seasonalIndices: "Indices Saisonniers - Méthode des Rapports à la Moyenne Mobile",
+    modelAccuracy: "Précision du Modèle",
+    meanAbsoluteError: "Erreur Absolue Moyenne",
+    meanSquaredError: "Erreur Quadratique Moyenne",
+    rootMeanSquaredError: "Racine de l'Erreur Quadratique Moyenne",
+    mainFormulas: "Formules Principales (Modèle Multiplicatif)",
+    multiplicativeModel: "Modèle Multiplicatif",
+    model: "Modèle",
+    estimatedSeries: "Série estimée",
+    residuals: "Résidus",
+    forecasts2022: "Prévisions 2022",
+    originalData: "Données Originales",
+    trendComparison: "Comparaison des Tendances",
+    movingAverage: "Moyenne Mobile",
+    seasonalCoefficients: "Coefficients Saisonniers",
+    accuracyComparison: "Comparaison de Précision",
+    estimatedSeriesTab: "Série Estimée",
+    residualsTab: "Résidus",
+    cvsSeriesTab: "Série CVS",
+    forecastTab: "Prévisions 2022",
+    comments: "Commentaires :",
+    interpretation: "Interprétation :",
+    units: "unités",
+    confidenceInterval: "IC à 95%",
+    method: "Méthode",
+    status: "Statut",
+    selected: "✓ Sélectionné",
+    bestMAE: "🏆 Meilleur MAE",
+    simpleAverages: "Moyennes Simples (Y/T)",
+    ratioToTrend: "Rapport à la Tendance",
+    ratioToMovingAverage: "Rapport à la Moyenne Mobile",
+    quarterlySales: "Ventes Trimestrielles (2018-2021)",
+    clearUpwardTrend: "Tendance haussière claire des ventes sur la période de 4 ans",
+    strongSeasonalPattern: "Modèle saisonnier fort : T3 a systématiquement les ventes les plus élevées",
+    q3HighestSales: "T3 affiche les ventes les plus élevées sur toutes les années",
+    q1LowestSales: "T1 affiche les ventes les plus faibles sur toutes les années",
+    seasonalAmplitude: "L'amplitude saisonnière augmente avec le niveau de tendance → Le modèle multiplicatif est approprié",
+    ratioStable: "Le ratio Yt / Tendance reste relativement stable, confirmant la décomposition multiplicative",
+    trendEstimation: "Estimation de la Tendance - Méthode des Moindres Carrés",
+    leastSquares: "Moindres Carrés",
+    semiAverage: "Semi-Moyenne",
+    actualSales: "Ventes réelles",
+    centeredMA: "Moyenne Mobile Centrée (MMc4)",
+    forQuarterlyData: "Pour les données trimestrielles (nombre pair de périodes), nous utilisons une moyenne mobile centrée :",
+    eliminatesSeasonal: "Cela élimine les fluctuations saisonnières et montre plus clairement la tendance générale.",
+    seasonalIndicesComparison: "Indices Saisonniers - Comparaison",
+    product: "Produit",
+    correction: "Correction",
+    interpretationMultiplicative: "Interprétation (Modèle Multiplicatif) :",
+    aboveAverage: "Indice saisonnier > 1 : Période au-dessus de la moyenne (saisonnalité positive)",
+    belowAverage: "Indice saisonnier < 1 : Période en-dessous de la moyenne (saisonnalité négative)",
+    noSeasonalEffect: "Indice saisonnier = 1 : Aucun effet saisonnier",
+    methodLabel: "Méthode : Calculer Yt/MMc4 pour chaque observation, moyenner par trimestre, puis ajuster pour que le produit égale 1.",
+    accuracyComparisonAll: "Comparaison de Précision - Les Trois Méthodes",
+    bias: "Biais",
+    originalModelAcc: "📊 Précision du Modèle Original",
+    selectedMethodLabel: "Méthode sélectionnée",
+    reestimatedModelAcc: "🔄 Précision du Modèle Ré-estimé (CVS)",
+    trendRefitted: "Tendance réajustée via série désaisonnalisée",
+    betterFitCVS: "✓ Meilleur ajustement via ré-estimation CVS",
+    originalMoreAccurate: "✗ La tendance originale est plus précise",
+    interpretationLabel: "📋 Interprétation :",
+    biasExplanation: "Biais : Moyenne de toutes les erreurs. Proche de 0 est meilleur. Positif = surestimation systématique.",
+    maeExplanation: "MAE : Erreur Absolue Moyenne - magnitude moyenne des erreurs de prédiction (en unités)",
+    mseExplanation: "MSE (EQM) : Erreur Quadratique Moyenne - pénalise davantage les grandes erreurs",
+    rmseExplanation: "RMSE : Racine de l'Erreur Quadratique Moyenne - mêmes unités que les données, plus facile à interpréter",
+    lowerValues: "Des valeurs plus faibles dans toutes les métriques indiquent un meilleur ajustement du modèle",
+    estimatedVsActual: "Série Estimée vs Réelle (Modèle Multiplicatif)",
+    multiplicativeEquation: "Équation du Modèle Multiplicatif :",
+    estimatedSeriesFormula: "Série estimée :",
+    whereLabel: "où",
+    modelAccuracyLabel: "Précision du Modèle :",
+    residualsRandomComponent: "Résidus - Composante Aléatoire (εt)",
+    multiplicativeResiduals: "Résidus du Modèle Multiplicatif :",
+    residualsRepresent: "Les résidus représentent la composante aléatoire/accidentelle non expliquée par la tendance et la saisonnalité",
+    interpretationResiduals: "Interprétation :",
+    higherThanPredicted: "εt > 1 : La valeur réelle est supérieure à la prédiction",
+    lowerThanPredicted: "εt < 1 : La valeur réelle est inférieure à la prédiction",
+    perfectPrediction: "εt = 1 : Prédiction parfaite",
+    seasonallyAdjusted: "Série Corrigée des Variations Saisonnières (CVS)",
+    multiplicativeDeseasonalization: "Désaisonnalisation Multiplicative :",
+    cvsSeriesRemoves: "La série CVS (Corrigée des Variations Saisonnières) élimine l'effet saisonnier en divisant par l'indice saisonnier, révélant la tendance sous-jacente et la composante aléatoire.",
+    purposeLabel: "Objectif :",
+    allowsComparison: "Permet la comparaison entre différents trimestres sans distorsion saisonnière.",
+    forecasts2022Title: "Prévisions pour 2022 (Modèle Multiplicatif)",
+    forecastFormula: "Formule de Prévision (Multiplicatif) :",
+    linearTrend: "tendance linéaire",
+    seasonalIndexFor: "indice saisonnier pour le trimestre correspondant",
+    footerLine1: "Analyse de Séries Temporelles - Prof. Soumaya FELLAJI - Année Académique 2025/2026",
+    footerLine2: "Projet géré par Mohamed Reda Touhami",
+  },
+  en: {
+    title: "Time Series Analysis - Quarterly Sales (Multiplicative Model)",
+    seasonalMethod: "Seasonal method",
+    seasonalMethodInfo: "Select which method to use for seasonal decomposition",
+    productLabel: "Product",
+    correctionLabel: "Correction factor",
+    originalAccuracy: "Original model accuracy",
+    originalAccuracyInfo: "Error metrics for the original trend-based model",
+    reestimatedModel: "Re-estimated model (CVS)",
+    reestimatedModelInfo: "Model re-estimated after deseasonalization",
+    showLabel: "show",
+    trendLabel: "Trend (CVS)",
+    hideTable: "🔼 Hide Calculation Table",
+    showTable: "🔽 Show Complete Calculation Table",
+    calculationTable: "Calculation Summary Table - Multiplicative Model",
+    exportCSV: "📥 Export CSV",
+    copy: "📋 Copy",
+    year: "Year",
+    quarter: "Quarter",
+    sales: "Sales (Yt)",
+    trend: "Trend (Tt)",
+    seasonalIndex: "Seasonal Index (St)",
+    estimated: "Estimated (Ŷt = Tt×St)",
+    residualRatio: "Residual Ratio (εt)",
+    cvs: "CVS (Yt/St)",
+    seasonalIndices: "Seasonal Indices - Ratio-to-Moving-Average Method",
+    modelAccuracy: "Model Accuracy",
+    meanAbsoluteError: "Mean Absolute Error",
+    meanSquaredError: "Mean Squared Error",
+    rootMeanSquaredError: "Root Mean Squared Error",
+    mainFormulas: "Main Formulas (Multiplicative Model)",
+    multiplicativeModel: "Multiplicative Model",
+    model: "Model",
+    estimatedSeries: "Estimated series",
+    residuals: "Residuals",
+    forecasts2022: "2022 Forecasts",
+    originalData: "Original Data",
+    trendComparison: "Trend Comparison",
+    movingAverage: "Moving Average",
+    seasonalCoefficients: "Seasonal Coefficients",
+    accuracyComparison: "Accuracy Comparison",
+    estimatedSeriesTab: "Estimated Series",
+    residualsTab: "Residuals",
+    cvsSeriesTab: "CVS Series",
+    forecastTab: "2022 Forecasts",
+    comments: "Comments:",
+    interpretation: "Interpretation:",
+    units: "units",
+    confidenceInterval: "95% CI",
+    method: "Method",
+    status: "Status",
+    selected: "✓ Selected",
+    bestMAE: "🏆 Best MAE",
+    simpleAverages: "Simple Averages (Y/T)",
+    ratioToTrend: "Ratio to Trend",
+    ratioToMovingAverage: "Ratio to Moving Average",
+    quarterlySales: "Quarterly Sales (2018-2021)",
+    clearUpwardTrend: "Clear upward trend in sales over the 4-year period",
+    strongSeasonalPattern: "Strong seasonal pattern: Q3 consistently has highest sales",
+    q3HighestSales: "Q3 shows highest sales across all years",
+    q1LowestSales: "Q1 shows lowest sales across all years",
+    seasonalAmplitude: "Seasonal amplitude increases with the trend level → Multiplicative model is appropriate",
+    ratioStable: "The ratio Yt / Trend remains relatively stable, confirming multiplicative decomposition",
+    trendEstimation: "Trend Estimation - Least Squares Method",
+    leastSquares: "Least Squares",
+    semiAverage: "Semi-Average",
+    actualSales: "Actual sales",
+    centeredMA: "Centered Moving Average (MMc4)",
+    forQuarterlyData: "For quarterly data (even number of periods), we use a centered moving average:",
+    eliminatesSeasonal: "This eliminates seasonal fluctuations and shows the general trend more clearly.",
+    seasonalIndicesComparison: "Seasonal Indices - Comparison",
+    product: "Product",
+    correction: "Correction",
+    interpretationMultiplicative: "Interpretation (Multiplicative Model):",
+    aboveAverage: "Seasonal index > 1: Above-average period (positive seasonality)",
+    belowAverage: "Seasonal index < 1: Below-average period (negative seasonality)",
+    noSeasonalEffect: "Seasonal index = 1: No seasonal effect",
+    methodLabel: "Method: Calculate Yt/MMc4 for each observation, average by quarter, then adjust so product equals 1.",
+    accuracyComparisonAll: "Accuracy Comparison - All Three Methods",
+    bias: "Bias",
+    originalModelAcc: "📊 Original Model Accuracy",
+    selectedMethodLabel: "Selected Method",
+    reestimatedModelAcc: "🔄 Re-estimated Model Accuracy (CVS)",
+    trendRefitted: "Trend re-fitted via deseasonalized series",
+    betterFitCVS: "✓ Better fit via CVS re-estimation",
+    originalMoreAccurate: "✗ Original trend is more accurate",
+    interpretationLabel: "📋 Interpretation:",
+    biasExplanation: "Bias: Mean of all errors. Close to 0 is best. Positive = systematic overestimation.",
+    maeExplanation: "MAE: Mean Absolute Error - average magnitude of prediction errors (in units)",
+    mseExplanation: "MSE (EQM): Mean Squared Error - penalizes large errors more heavily",
+    rmseExplanation: "RMSE: Root Mean Squared Error - same units as data, easier to interpret",
+    lowerValues: "Lower values in all metrics indicate better model fit",
+    estimatedVsActual: "Estimated Series vs Actual (Multiplicative Model)",
+    multiplicativeEquation: "Multiplicative Model Equation:",
+    estimatedSeriesFormula: "Estimated series:",
+    whereLabel: "where",
+    modelAccuracyLabel: "Model Accuracy:",
+    residualsRandomComponent: "Residuals - Random Component (εt)",
+    multiplicativeResiduals: "Multiplicative Model Residuals:",
+    residualsRepresent: "Residuals represent the random/accidental component not explained by trend and seasonality",
+    interpretationResiduals: "Interpretation:",
+    higherThanPredicted: "εt > 1: Actual value is higher than predicted",
+    lowerThanPredicted: "εt < 1: Actual value is lower than predicted",
+    perfectPrediction: "εt = 1: Perfect prediction",
+    seasonallyAdjusted: "Seasonally Adjusted Series (CVS)",
+    multiplicativeDeseasonalization: "Multiplicative Deseasonalization:",
+    cvsSeriesRemoves: "The CVS (Corrigée des Variations Saisonnières) series removes the seasonal effect by dividing by the seasonal index, revealing the underlying trend and random component.",
+    purposeLabel: "Purpose:",
+    allowsComparison: "Allows comparison across different quarters without seasonal distortion.",
+    forecasts2022Title: "Forecasts for 2022 (Multiplicative Model)",
+    forecastFormula: "Forecast Formula (Multiplicative):",
+    linearTrend: "linear trend",
+    seasonalIndexFor: "seasonal index for the corresponding quarter",
+    footerLine1: "Time Series Analysis - Prof. Soumaya FELLAJI - Academic Year 2025/2026",
+    footerLine2: "Project managed by Mohamed Reda Touhami",
+  }
+};
+
 const TimeSeriesAnalysis = () => {
+  const [language, setLanguage] = useState<Language>('fr');
   const [activeTab, setActiveTab] = useState('original');
   const [showTable, setShowTable] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<SeasonalMethodName>('ratio-to-moving-average');
   const [showReestimated, setShowReestimated] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  const t = translations[language];
 
   // Données originales
   const originalData = [
@@ -231,7 +588,7 @@ const TimeSeriesAnalysis = () => {
     return [
       {
         name: 'simple-averages',
-        label: 'Simple Averages (Y/T)',
+        label: t.simpleAverages,
         coefficients: simple.corrected,
         product: simple.product,
         correctionFactor: simple.factor,
@@ -239,7 +596,7 @@ const TimeSeriesAnalysis = () => {
       },
       {
         name: 'ratio-to-trend',
-        label: 'Ratio to Trend',
+        label: t.ratioToTrend,
         coefficients: ratioTrend.corrected,
         product: ratioTrend.product,
         correctionFactor: ratioTrend.factor,
@@ -247,7 +604,7 @@ const TimeSeriesAnalysis = () => {
       },
       {
         name: 'ratio-to-moving-average',
-        label: 'Ratio to Moving Average',
+        label: t.ratioToMovingAverage,
         coefficients: ratioMA.corrected,
         product: ratioMA.product,
         correctionFactor: ratioMA.factor,
@@ -256,7 +613,7 @@ const TimeSeriesAnalysis = () => {
     ];
   };
 
-  const seasonalMethods = useMemo(() => buildSeasonalMethods(), [movingAvgData]);
+  const seasonalMethods = useMemo(() => buildSeasonalMethods(), [movingAvgData, language]);
   const selectedSeasonal = seasonalMethods.find((m: SeasonalMethod) => m.name === selectedMethod) || seasonalMethods[0];
 
   // Build estimated series for a given seasonal method and trend params
@@ -379,17 +736,35 @@ const TimeSeriesAnalysis = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 md:p-6 bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen">
-      <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-indigo-900">
-        Time Series Analysis - Quarterly Sales (Multiplicative Model)
-      </h1>
+    <div className="w-full min-h-screen relative overflow-hidden">
+      {/* Animated background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(99,102,241,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.05),transparent_70%)]"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto p-4 md:p-6">
+        {/* Header with language toggle */}
+        <div className="flex justify-between items-start mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-900 via-purple-900 to-violet-900 flex-1">
+            {t.title}
+          </h1>
+          <button
+            onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+            className="ml-4 px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-indigo-300 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 font-bold text-indigo-700 text-sm"
+            title={language === 'fr' ? 'Switch to English' : 'Passer au français'}
+          >
+            {language === 'fr' ? 'EN' : 'FR'}
+          </button>
+        </div>
 
       {/* Method selection & toggles */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="bg-white p-3 md:p-4 rounded-lg shadow border border-indigo-100">
+        <div className="bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border-2 border-indigo-200/50 hover:shadow-xl transition-shadow">
           <div className="text-xs md:text-sm font-semibold text-indigo-700 mb-2 flex items-center gap-1">
-            Seasonal method
-            <span className="text-gray-400 cursor-help" title="Select which method to use for seasonal decomposition">ℹ️</span>
+            {t.seasonalMethod}
+            <span className="text-gray-400 cursor-help" title={t.seasonalMethodInfo}>ℹ️</span>
           </div>
           <select
             value={selectedMethod}
@@ -400,13 +775,13 @@ const TimeSeriesAnalysis = () => {
               <option key={m.name} value={m.name}>{m.label}</option>
             ))}
           </select>
-          <div className="text-xs text-gray-500 mt-2">Product = {selectedSeasonal.product.toFixed(4)} | Correction factor {selectedSeasonal.correctionFactor.toFixed(6)}</div>
+          <div className="text-xs text-gray-500 mt-2">{t.productLabel} = {selectedSeasonal.product.toFixed(4)} | {t.correctionLabel} {selectedSeasonal.correctionFactor.toFixed(6)}</div>
         </div>
 
-        <div className="bg-white p-3 md:p-4 rounded-lg shadow border border-green-100">
-          <div className="text-xs md:text-sm font-semibold text-green-700 mb-2 flex items-center gap-1">
-            Original model accuracy
-            <span className="text-gray-400 cursor-help" title="Error metrics for the original trend-based model">ℹ️</span>
+        <div className="bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border-2 border-emerald-200/50 hover:shadow-xl transition-shadow">
+          <div className="text-xs md:text-sm font-semibold text-emerald-700 mb-2 flex items-center gap-1">
+            {t.originalAccuracy}
+            <span className="text-gray-400 cursor-help" title={t.originalAccuracyInfo}>ℹ️</span>
           </div>
           <div className="text-xs text-gray-600">Bias: <span className="font-semibold">{accuracyMetrics.bias}</span></div>
           <div className="text-xs text-gray-600">MAE: <span className="font-semibold">{accuracyMetrics.mae}</span></div>
@@ -414,21 +789,21 @@ const TimeSeriesAnalysis = () => {
           <div className="text-xs text-gray-600">RMSE: <span className="font-semibold">{accuracyMetrics.rmse}</span></div>
         </div>
 
-        <div className="bg-white p-3 md:p-4 rounded-lg shadow border border-purple-100">
+        <div className="bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-xl shadow-lg border-2 border-purple-200/50 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between mb-2">
             <div className="text-xs md:text-sm font-semibold text-purple-700 flex items-center gap-1">
-              Re-estimated model (CVS)
-              <span className="text-gray-400 cursor-help" title="Model re-estimated after deseasonalization">ℹ️</span>
+              {t.reestimatedModel}
+              <span className="text-gray-400 cursor-help" title={t.reestimatedModelInfo}>ℹ️</span>
             </div>
             <label className="text-xs text-gray-500 flex items-center gap-1">
-              <input type="checkbox" checked={showReestimated} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShowReestimated(e.target.checked)} /> show
+              <input type="checkbox" checked={showReestimated} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShowReestimated(e.target.checked)} /> {t.showLabel}
             </label>
           </div>
           <div className="text-xs text-gray-600">Bias: <span className="font-semibold">{reestimatedMetrics.bias}</span></div>
           <div className="text-xs text-gray-600">MAE: <span className="font-semibold">{reestimatedMetrics.mae}</span></div>
           <div className="text-xs text-gray-600">MSE (EQM): <span className="font-semibold">{reestimatedMetrics.mse}</span></div>
           <div className="text-xs text-gray-600">RMSE: <span className="font-semibold">{reestimatedMetrics.rmse}</span></div>
-          <div className="text-xs text-gray-500 mt-1">Trend (CVS): {reestimatedTrend.b.toFixed(2)} + {reestimatedTrend.a.toFixed(2)}t</div>
+          <div className="text-xs text-gray-500 mt-1">{t.trendLabel}: {reestimatedTrend.b.toFixed(2)} + {reestimatedTrend.a.toFixed(2)}t</div>
         </div>
       </div>
 
@@ -436,31 +811,31 @@ const TimeSeriesAnalysis = () => {
       <div className="mb-4 text-center">
         <button
           onClick={() => setShowTable(!showTable)}
-          className="px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-sm md:text-base font-bold rounded-lg shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all"
+          className="px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 text-white text-sm md:text-base font-bold rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all"
         >
-          {showTable ? '🔼 Hide Calculation Table' : '🔽 Show Complete Calculation Table'}
+          {showTable ? t.hideTable : t.showTable}
         </button>
       </div>
 
       {/* Calculation table */}
       {showTable && (
-        <div className="mb-6 bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
+        <div className="mb-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-6 overflow-x-auto border-2 border-indigo-100">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-indigo-800">Calculation Summary Table - Multiplicative Model</h2>
+            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.calculationTable}</h2>
             <div className="flex gap-2">
               <button
                 onClick={() => exportToCSV(estimatedData, 'time-series-calculations')}
-                className="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
-                title="Export table as CSV"
+                className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-sm rounded-lg hover:shadow-lg transition-all hover:scale-105"
+                title={t.exportCSV}
               >
-                📥 Export CSV
+                {t.exportCSV}
               </button>
               <button
                 onClick={() => copyTableToClipboard(estimatedData)}
-                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                title="Copy data to clipboard"
+                className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm rounded-lg hover:shadow-lg transition-all hover:scale-105"
+                title={t.copy}
               >
-                📋 Copy
+                {t.copy}
               </button>
             </div>
           </div>
@@ -469,17 +844,17 @@ const TimeSeriesAnalysis = () => {
 
             <table className="min-w-full border-collapse border border-indigo-300">
               <thead>
-                <tr className="bg-indigo-600 text-white">
+                <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
                   <th className="border border-indigo-300 px-3 py-2">t</th>
-                  <th className="border border-indigo-300 px-3 py-2">Year</th>
-                  <th className="border border-indigo-300 px-3 py-2">Quarter</th>
-                  <th className="border border-indigo-300 px-3 py-2">Sales (Yt)</th>
-                  <th className="border border-indigo-300 px-3 py-2">Trend (Tt)</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.year}</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.quarter}</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.sales}</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.trend}</th>
                   <th className="border border-indigo-300 px-3 py-2">Yt / Tt</th>
-                  <th className="border border-indigo-300 px-3 py-2">Seasonal Index (St)</th>
-                  <th className="border border-indigo-300 px-3 py-2">Estimated (Ŷt = Tt×St)</th>
-                  <th className="border border-indigo-300 px-3 py-2">Residual Ratio (εt)</th>
-                  <th className="border border-indigo-300 px-3 py-2">CVS (Yt/St)</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.seasonalIndex}</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.estimated}</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.residualRatio}</th>
+                  <th className="border border-indigo-300 px-3 py-2">{t.cvs}</th>
                 </tr>
               </thead>
               <tbody>
@@ -506,8 +881,8 @@ const TimeSeriesAnalysis = () => {
           </div>
 
           {/* Seasonal coefficients calculation details */}
-          <div className="mt-6 bg-indigo-50 p-4 rounded-lg">
-            <h3 className="font-bold text-lg mb-3 text-indigo-800">Seasonal Indices - Ratio-to-Moving-Average Method</h3>
+          <div className="mt-6 bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border-2 border-indigo-200 shadow-lg">
+            <h3 className="font-bold text-lg mb-3 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.seasonalIndices}</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 {Object.entries(selectedSeasonal.coefficients).map(([quarter, index]) => (
@@ -530,28 +905,28 @@ const TimeSeriesAnalysis = () => {
           </div>
 
           {/* Model Accuracy Metrics */}
-          <div className="mt-6 bg-green-50 p-4 rounded-lg border-2 border-green-200">
-            <h3 className="font-bold text-lg mb-3 text-green-800">Model Accuracy Metrics</h3>
+          <div className="mt-6 bg-gradient-to-br from-emerald-50 to-green-50 p-4 rounded-xl border-2 border-emerald-200 shadow-lg">
+            <h3 className="font-bold text-lg mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-green-700">{t.modelAccuracy}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">Mean Absolute Error</div>
-                <div className="text-2xl font-bold text-green-700">{accuracyMetrics.mae}</div>
+              <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg text-center shadow-md">
+                <div className="text-sm text-gray-600">{t.meanAbsoluteError}</div>
+                <div className="text-2xl font-bold text-emerald-700">{accuracyMetrics.mae}</div>
               </div>
-              <div className="bg-white p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">Mean Squared Error</div>
-                <div className="text-2xl font-bold text-green-700">{accuracyMetrics.mse}</div>
+              <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg text-center shadow-md">
+                <div className="text-sm text-gray-600">{t.meanSquaredError}</div>
+                <div className="text-2xl font-bold text-emerald-700">{accuracyMetrics.mse}</div>
               </div>
-              <div className="bg-white p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">Root Mean Squared Error</div>
-                <div className="text-2xl font-bold text-green-700">{accuracyMetrics.rmse}</div>
+              <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg text-center shadow-md">
+                <div className="text-sm text-gray-600">{t.rootMeanSquaredError}</div>
+                <div className="text-2xl font-bold text-emerald-700">{accuracyMetrics.rmse}</div>
               </div>
             </div>
           </div>
 
           {/* Formulas */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-                <h4 className="font-bold mb-2">Main Formulas (Multiplicative Model)</h4>
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 shadow-lg">
+                <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">{t.mainFormulas}</h4>
                 <div className="space-y-2 text-sm">
                   <p><strong>Trend (Least Squares):</strong> Tt = {trendB.toFixed(3)} + {trendA.toFixed(3)}t</p>
                   <p><strong>Model:</strong> Yt = Tt × St × εt</p>
@@ -562,8 +937,8 @@ const TimeSeriesAnalysis = () => {
                 </div>
               </div>
 
-              <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
-                <h4 className="font-bold mb-2">2022 Forecasts (Ŷt = Tt × St)</h4>
+              <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-4 rounded-xl border-2 border-emerald-200 shadow-lg">
+                <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-green-700">{t.forecasts2022} (Ŷt = Tt × St)</h4>
                 <div className="space-y-1 text-sm">
                   <p className="font-semibold text-indigo-700">Original trend</p>
                   {forecastsOriginal.map(f => (
@@ -584,24 +959,24 @@ const TimeSeriesAnalysis = () => {
       )}
 
       {/* Tab menu */}
-      <div className="flex flex-wrap gap-1 md:gap-2 mb-4 md:mb-6 bg-white p-2 rounded-lg shadow overflow-x-auto">
+      <div className="flex flex-wrap gap-1 md:gap-2 mb-4 md:mb-6 bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-indigo-100 overflow-x-auto">
         {[
-          { id: 'original', label: 'Original Data' },
-          { id: 'trends', label: 'Trend Comparison' },
-          { id: 'moving', label: 'Moving Average' },
-          { id: 'seasonal', label: 'Seasonal Coefficients' },
-          { id: 'accuracy', label: 'Accuracy Comparison' },
-          { id: 'estimated', label: 'Estimated Series' },
-          { id: 'residuals', label: 'Residuals' },
-          { id: 'cvs', label: 'CVS Series' },
-          { id: 'forecast', label: '2022 Forecasts' },
+          { id: 'original', label: t.originalData },
+          { id: 'trends', label: t.trendComparison },
+          { id: 'moving', label: t.movingAverage },
+          { id: 'seasonal', label: t.seasonalCoefficients },
+          { id: 'accuracy', label: t.accuracyComparison },
+          { id: 'estimated', label: t.estimatedSeriesTab },
+          { id: 'residuals', label: t.residualsTab },
+          { id: 'cvs', label: t.cvsSeriesTab },
+          { id: 'forecast', label: t.forecastTab },
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm rounded-md transition-colors whitespace-nowrap ${
+            className={`px-2 md:px-4 py-1.5 md:py-2 text-xs md:text-sm rounded-lg transition-all whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg scale-105'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -611,11 +986,11 @@ const TimeSeriesAnalysis = () => {
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-4 md:p-6 border-2 border-indigo-100">
         {/* 1. Original data */}
         {activeTab === 'original' && (
           <div>
-            <h2 className="text-xl md:text-2xl font-bold mb-4 text-indigo-800">Quarterly Sales (2018-2021)</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.quarterlySales}</h2>
             <ResponsiveContainer width="100%" height={300} className="md:hidden">
               <LineChart data={originalData.map((d: { t: number; year: number; quarter: string; sales: number }) => ({ ...d, label: `${d.year}-${d.quarter}` }))}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -637,14 +1012,14 @@ const TimeSeriesAnalysis = () => {
               </LineChart>
             </ResponsiveContainer>
             
-            <div className="mt-4 md:mt-6 p-3 md:p-4 bg-indigo-50 rounded-lg">
-              <h3 className="font-bold text-base md:text-lg mb-2">Comments:</h3>
+            <div className="mt-4 md:mt-6 p-3 md:p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200 shadow-lg">
+              <h3 className="font-bold text-base md:text-lg mb-2">{t.comments}</h3>
               <ul className="list-disc list-inside space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li>Clear upward trend in sales over the 4-year period</li>
-                <li>Strong seasonal pattern: Q3 consistently has highest sales</li>
-                <li>Q1 shows lowest sales across all years</li>
-                <li>Seasonal amplitude increases with the trend level → Multiplicative model is appropriate</li>
-                <li>The ratio Yt / Trend remains relatively stable, confirming multiplicative decomposition</li>
+                <li>{t.clearUpwardTrend}</li>
+                <li>{t.strongSeasonalPattern}</li>
+                <li>{t.q1LowestSales}</li>
+                <li>{t.seasonalAmplitude}</li>
+                <li>{t.ratioStable}</li>
               </ul>
             </div>
           </div>
@@ -653,7 +1028,7 @@ const TimeSeriesAnalysis = () => {
         {/* 2. Trend comparison */}
         {activeTab === 'trends' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Trend Estimation - Least Squares Method</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.trendEstimation}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={originalData.map(d => ({ ...d, label: `${d.year}-${d.quarter}`, trendMC: getTrend(d.t), trendSM: calculateTrendSemiAverage().a * d.t + calculateTrendSemiAverage().b, mmc4: movingAvgData.find(m => m.t === d.t)?.mmc4 }))}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -661,25 +1036,25 @@ const TimeSeriesAnalysis = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={2} name="Actual sales" dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="trendMC" stroke="#ef4444" strokeWidth={2} name="Trend (Least squares)" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="trendSM" stroke="#10b981" strokeWidth={2} name="Trend (Semi-average)" strokeDasharray="6 4" />
-                <Line type="monotone" dataKey="mmc4" stroke="#f59e0b" strokeWidth={2} name="Moving average (MMc4)" strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={2} name={t.actualSales} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="trendMC" stroke="#ef4444" strokeWidth={2} name={`${t.trend} (${t.leastSquares})`} strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="trendSM" stroke="#10b981" strokeWidth={2} name={`${t.trend} (${t.semiAverage})`} strokeDasharray="6 4" />
+                <Line type="monotone" dataKey="mmc4" stroke="#f59e0b" strokeWidth={2} name={`${t.movingAverage} (MMc4)`} strokeDasharray="3 3" />
               </LineChart>
             </ResponsiveContainer>
             
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-red-50 rounded-lg border-2 border-red-200">
-                <h3 className="font-bold text-lg mb-2">Least Squares</h3>
+              <div className="p-4 bg-gradient-to-br from-red-50 to-rose-50 rounded-xl border-2 border-red-200 shadow-lg">
+                <h3 className="font-bold text-lg mb-2">{t.leastSquares}</h3>
                 <p className="font-mono text-lg mb-3">T<sub>t</sub> = {trendB.toFixed(3)} + {trendA.toFixed(3)}t</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg border-2 border-green-200">
-                <h3 className="font-bold text-lg mb-2">Semi-Average</h3>
+              <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 shadow-lg">
+                <h3 className="font-bold text-lg mb-2">{t.semiAverage}</h3>
                 <p className="font-mono text-lg mb-3">T<sub>t</sub> = {calculateTrendSemiAverage().b.toFixed(2)} + {calculateTrendSemiAverage().a.toFixed(2)}t</p>
               </div>
-              <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
-                <h3 className="font-bold text-lg mb-2">Moving Average (MMc4)</h3>
-                <p className="text-sm">Displayed as orange dashed line (centered order 4)</p>
+              <div className="p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border-2 border-orange-200 shadow-lg">
+                <h3 className="font-bold text-lg mb-2">{t.movingAverage} (MMc4)</h3>
+                <p className="text-sm">{language === 'fr' ? 'Affiché comme ligne orange pointillée (centrée ordre 4)' : 'Displayed as orange dashed line (centered order 4)'}</p>
               </div>
             </div>
           </div>
@@ -688,7 +1063,7 @@ const TimeSeriesAnalysis = () => {
         {/* 3. Moving average */}
         {activeTab === 'moving' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Centered Moving Average (MMc4)</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.centeredMA}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={movingAvgData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -696,16 +1071,16 @@ const TimeSeriesAnalysis = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={2} name="Actual sales" dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="mmc4" stroke="#f59e0b" strokeWidth={3} name="Centered MA (MMc4)" connectNulls />
+                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={2} name={t.actualSales} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="mmc4" stroke="#f59e0b" strokeWidth={3} name={`${t.centeredMA} (MMc4)`} connectNulls />
               </LineChart>
             </ResponsiveContainer>
             
-            <div className="mt-6 p-4 bg-orange-50 rounded-lg">
-              <h3 className="font-bold text-lg mb-2">Centered Moving Average - Order 4</h3>
-              <p className="mb-2">For quarterly data (even number of periods), we use a centered moving average:</p>
+            <div className="mt-6 p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border-2 border-orange-200 shadow-lg">
+              <h3 className="font-bold text-lg mb-2">{t.centeredMA} - {language === 'fr' ? 'Ordre 4' : 'Order 4'}</h3>
+              <p className="mb-2">{t.forQuarterlyData}</p>
               <p className="font-mono text-sm">MMc4<sub>t</sub> = (MM4<sub>t</sub> + MM4<sub>t+1</sub>) / 2</p>
-              <p className="mt-2">This eliminates seasonal fluctuations and shows the general trend more clearly.</p>
+              <p className="mt-2">{t.eliminatesSeasonal}</p>
             </div>
           </div>
         )}
@@ -713,7 +1088,7 @@ const TimeSeriesAnalysis = () => {
         {/* 4. Seasonal coefficients */}
         {activeTab === 'seasonal' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Seasonal Indices - Comparison</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.seasonalIndicesComparison}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={seasonalMethods.map(m => ({
                 method: m.label,
@@ -733,10 +1108,10 @@ const TimeSeriesAnalysis = () => {
             
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               {seasonalMethods.map(m => (
-                <div key={m.name} className="p-4 rounded-lg border shadow-sm" style={{ borderColor: '#e0e7ff' }}>
+                <div key={m.name} className="p-4 rounded-xl border-2 shadow-lg bg-gradient-to-br from-white to-indigo-50 hover:shadow-xl transition-shadow" style={{ borderColor: '#e0e7ff' }}>
                   <div className="font-bold text-indigo-700 mb-2">{m.label}</div>
-                  <div className="text-xs text-gray-600">Product: {m.product.toFixed(4)}</div>
-                  <div className="text-xs text-gray-600">Correction: {m.correctionFactor.toFixed(6)}</div>
+                  <div className="text-xs text-gray-600">{t.product}: {m.product.toFixed(4)}</div>
+                  <div className="text-xs text-gray-600">{t.correction}: {m.correctionFactor.toFixed(6)}</div>
                   <div className="grid grid-cols-2 gap-2 mt-3 text-sm">
                     {quarters.map(q => (
                       <div key={`${m.name}-${q}`} className="flex justify-between">
@@ -749,15 +1124,15 @@ const TimeSeriesAnalysis = () => {
               ))}
             </div>
 
-            <div className="mt-4 p-4 bg-indigo-50 rounded-lg">
-              <p className="font-bold mb-2">Interpretation (Multiplicative Model):</p>
+            <div className="mt-4 p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200 shadow-lg">
+              <p className="font-bold mb-2">{t.interpretationMultiplicative}</p>
               <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Seasonal index &gt; 1: Above-average period (positive seasonality)</li>
-                <li>Seasonal index &lt; 1: Below-average period (negative seasonality)</li>
-                <li>Seasonal index = 1: No seasonal effect</li>
-                <li>Product of all indices = {selectedSeasonal.product.toFixed(4)} ≈ 1.0000 ✓</li>
+                <li>{t.aboveAverage}</li>
+                <li>{t.belowAverage}</li>
+                <li>{t.noSeasonalEffect}</li>
+                <li>{t.product} = {selectedSeasonal.product.toFixed(4)} ≈ 1.0000 ✓</li>
               </ul>
-              <p className="mt-3 text-sm"><strong>Method:</strong> Calculate Yt/MMc4 for each observation, average by quarter, then adjust so product equals 1.</p>
+              <p className="mt-3 text-sm"><strong>{t.method}</strong> {t.methodLabel}</p>
             </div>
           </div>
         )}
@@ -765,18 +1140,18 @@ const TimeSeriesAnalysis = () => {
         {/* 4b. Accuracy Comparison */}
         {activeTab === 'accuracy' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Accuracy Comparison - All Three Methods</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.accuracyComparisonAll}</h2>
             
             <div className="overflow-x-auto mb-6">
               <table className="min-w-full border-collapse border border-indigo-300 bg-white rounded-lg overflow-hidden">
                 <thead>
-                  <tr className="bg-indigo-600 text-white">
-                    <th className="border border-indigo-300 px-4 py-3 text-left">Method</th>
-                    <th className="border border-indigo-300 px-4 py-3 text-center">Bias</th>
+                  <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                    <th className="border border-indigo-300 px-4 py-3 text-left">{t.method}</th>
+                    <th className="border border-indigo-300 px-4 py-3 text-center">{t.bias}</th>
                     <th className="border border-indigo-300 px-4 py-3 text-center">MAE</th>
                     <th className="border border-indigo-300 px-4 py-3 text-center">MSE (EQM)</th>
                     <th className="border border-indigo-300 px-4 py-3 text-center">RMSE</th>
-                    <th className="border border-indigo-300 px-4 py-3 text-center">Status</th>
+                    <th className="border border-indigo-300 px-4 py-3 text-center">{t.status}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -790,14 +1165,14 @@ const TimeSeriesAnalysis = () => {
                       >
                         <td className="border border-indigo-300 px-4 py-3 font-bold text-indigo-700">
                           {m.label}
-                          {isSelected && <span className="ml-2 text-purple-600">✓ Selected</span>}
+                          {isSelected && <span className="ml-2 text-purple-600">{t.selected}</span>}
                         </td>
                         <td className="border border-indigo-300 px-4 py-3 text-center">{m.accuracy.bias}</td>
                         <td className="border border-indigo-300 px-4 py-3 text-center font-semibold">{m.accuracy.mae}</td>
                         <td className="border border-indigo-300 px-4 py-3 text-center">{m.accuracy.mse}</td>
                         <td className="border border-indigo-300 px-4 py-3 text-center">{m.accuracy.rmse}</td>
                         <td className="border border-indigo-300 px-4 py-3 text-center">
-                          {isBest && <span className="bg-green-200 text-green-800 px-2 py-1 rounded font-bold text-sm">🏆 Best MAE</span>}
+                          {isBest && <span className="bg-green-200 text-green-800 px-2 py-1 rounded font-bold text-sm">{t.bestMAE}</span>}
                         </td>
                       </tr>
                     );
@@ -807,10 +1182,10 @@ const TimeSeriesAnalysis = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-green-50 rounded-lg border-2 border-green-200">
-                <h3 className="font-bold text-lg mb-2 text-green-800">📊 Original Model Accuracy</h3>
+              <div className="p-4 bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl border-2 border-emerald-200 shadow-lg">
+                <h3 className="font-bold text-lg mb-2 text-emerald-800">{t.originalModelAcc}</h3>
                 <div className="space-y-2 text-sm">
-                  <p>Selected Method: <span className="font-bold text-indigo-700">{selectedSeasonal.label}</span></p>
+                  <p>{t.selectedMethodLabel}: <span className="font-bold text-indigo-700">{selectedSeasonal.label}</span></p>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     <div>Bias: <span className="font-bold">{accuracyMetrics.bias}</span></div>
                     <div>MAE: <span className="font-bold">{accuracyMetrics.mae}</span></div>
@@ -820,10 +1195,10 @@ const TimeSeriesAnalysis = () => {
                 </div>
               </div>
 
-              <div className="p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
-                <h3 className="font-bold text-lg mb-2 text-purple-800">🔄 Re-estimated Model Accuracy (CVS)</h3>
+              <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border-2 border-purple-200 shadow-lg">
+                <h3 className="font-bold text-lg mb-2 text-purple-800">{t.reestimatedModelAcc}</h3>
                 <div className="space-y-2 text-sm">
-                  <p>Trend re-fitted via deseasonalized series</p>
+                  <p>{t.trendRefitted}</p>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     <div>Bias: <span className="font-bold">{reestimatedMetrics.bias}</span></div>
                     <div>MAE: <span className="font-bold">{reestimatedMetrics.mae}</span></div>
@@ -831,20 +1206,20 @@ const TimeSeriesAnalysis = () => {
                     <div>RMSE: <span className="font-bold">{reestimatedMetrics.rmse}</span></div>
                   </div>
                   <div className="mt-2 text-xs text-purple-700 font-semibold">
-                    {reestimatedMetrics.mae < accuracyMetrics.mae ? '✓ Better fit via CVS re-estimation' : '✗ Original trend is more accurate'}
+                    {reestimatedMetrics.mae < accuracyMetrics.mae ? t.betterFitCVS : t.originalMoreAccurate}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-bold mb-2">📋 Interpretation:</h3>
+            <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-lg">
+              <h3 className="font-bold mb-2">{t.interpretationLabel}</h3>
               <ul className="list-disc list-inside text-sm space-y-1">
-                <li><strong>Bias:</strong> Mean of all errors. Close to 0 is best. Positive = systematic overestimation.</li>
-                <li><strong>MAE:</strong> Mean Absolute Error - average magnitude of prediction errors (in units)</li>
-                <li><strong>MSE (EQM):</strong> Mean Squared Error - penalizes large errors more heavily</li>
-                <li><strong>RMSE:</strong> Root Mean Squared Error - same units as data, easier to interpret</li>
-                <li><strong>Lower values</strong> in all metrics indicate better model fit</li>
+                <li>{t.biasExplanation}</li>
+                <li>{t.maeExplanation}</li>
+                <li>{t.mseExplanation}</li>
+                <li>{t.rmseExplanation}</li>
+                <li>{t.lowerValues}</li>
               </ul>
             </div>
           </div>
@@ -853,7 +1228,7 @@ const TimeSeriesAnalysis = () => {
         {/* 5. Estimated series */}
         {activeTab === 'estimated' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Estimated Series vs Actual (Multiplicative Model)</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.estimatedVsActual}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={estimatedData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -861,25 +1236,25 @@ const TimeSeriesAnalysis = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={3} name="Actual sales" dot={{ r: 5 }} />
-                <Line type="monotone" dataKey="estimated" stroke="#10b981" strokeWidth={2} name="Estimated sales (Ŷt)" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="trend" stroke="#ef4444" strokeWidth={1} name="Trend (Tt)" strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={3} name={t.actualSales} dot={{ r: 5 }} />
+                <Line type="monotone" dataKey="estimated" stroke="#10b981" strokeWidth={2} name={`${t.estimated} (Ŷt)`} strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="trend" stroke="#ef4444" strokeWidth={1} name={`${t.trend} (Tt)`} strokeDasharray="3 3" />
                 {showReestimated && (
-                  <Line type="monotone" dataKey="estimated" data={reestimatedData} stroke="#7c3aed" strokeWidth={2} name="Re-estimated (CVS)" strokeDasharray="4 4" />
+                  <Line type="monotone" dataKey="estimated" data={reestimatedData} stroke="#7c3aed" strokeWidth={2} name={language === 'fr' ? 'Ré-estimé (CVS)' : 'Re-estimated (CVS)'} strokeDasharray="4 4" />
                 )}
               </LineChart>
             </ResponsiveContainer>
             
-            <div className="mt-6 p-4 bg-green-50 rounded-lg">
-              <p className="font-bold">Multiplicative Model Equation:</p>
+            <div className="mt-6 p-4 bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl border-2 border-emerald-200 shadow-lg">
+              <p className="font-bold">{t.multiplicativeEquation}</p>
               <p className="font-mono text-lg mt-2">Y<sub>t</sub> = T<sub>t</sub> × S<sub>t</sub> × ε<sub>t</sub></p>
-              <p className="mt-2"><strong>Estimated series:</strong> Ŷ<sub>t</sub> = T<sub>t</sub> × S<sub>t</sub></p>
-              <p className="mt-2">where T<sub>t</sub> is the trend and S<sub>t</sub> is the seasonal index</p>
-              <div className="mt-4 p-3 bg-white rounded border border-green-300">
-                <p className="font-bold">Model Accuracy:</p>
-                <p>Bias: {accuracyMetrics.bias} | MAE: {accuracyMetrics.mae} | MSE (EQM): {accuracyMetrics.mse} | RMSE: {accuracyMetrics.rmse}</p>
+              <p className="mt-2"><strong>{t.estimatedSeriesFormula}</strong> Ŷ<sub>t</sub> = T<sub>t</sub> × S<sub>t</sub></p>
+              <p className="mt-2">{t.whereLabel} T<sub>t</sub> {language === 'fr' ? 'est la tendance et' : 'is the trend and'} S<sub>t</sub> {language === 'fr' ? "est l'indice saisonnier" : 'is the seasonal index'}</p>
+              <div className="mt-4 p-3 bg-white rounded border border-emerald-300">
+                <p className="font-bold">{t.modelAccuracyLabel}</p>
+                <p>{t.bias}: {accuracyMetrics.bias} | MAE: {accuracyMetrics.mae} | MSE (EQM): {accuracyMetrics.mse} | RMSE: {accuracyMetrics.rmse}</p>
                 {showReestimated && (
-                  <p className="mt-1 text-purple-700">Re-estimated → Bias: {reestimatedMetrics.bias} | MAE: {reestimatedMetrics.mae} | MSE: {reestimatedMetrics.mse} | RMSE: {reestimatedMetrics.rmse}</p>
+                  <p className="mt-1 text-purple-700">{language === 'fr' ? 'Ré-estimé' : 'Re-estimated'} → {t.bias}: {reestimatedMetrics.bias} | MAE: {reestimatedMetrics.mae} | MSE: {reestimatedMetrics.mse} | RMSE: {reestimatedMetrics.rmse}</p>
                 )}
               </div>
             </div>
@@ -889,7 +1264,7 @@ const TimeSeriesAnalysis = () => {
         {/* 6. Residuals */}
         {activeTab === 'residuals' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Residuals - Random Component (εt)</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.residualsRandomComponent}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={showReestimated ? [...estimatedData, ...reestimatedData.map(d => ({ ...d, label: `${d.label} (re)` }))] : estimatedData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -897,19 +1272,19 @@ const TimeSeriesAnalysis = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="residualRatio" fill="#8b5cf6" name="Residual Ratio (εt = Yt/Ŷt)" />
+                <Bar dataKey="residualRatio" fill="#8b5cf6" name={`${t.residualRatio} (εt = Yt/Ŷt)`} />
               </BarChart>
             </ResponsiveContainer>
             
-            <div className="mt-6 p-4 bg-purple-50 rounded-lg">
-              <p className="font-bold">Multiplicative Model Residuals:</p>
+            <div className="mt-6 p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border-2 border-purple-200 shadow-lg">
+              <p className="font-bold">{t.multiplicativeResiduals}</p>
               <p className="font-mono text-lg mt-2">ε<sub>t</sub> = Y<sub>t</sub> / Ŷ<sub>t</sub></p>
-              <p className="mt-2">Residuals represent the random/accidental component not explained by trend and seasonality</p>
-              <p className="mt-2"><strong>Interpretation:</strong></p>
+              <p className="mt-2">{t.residualsRepresent}</p>
+              <p className="mt-2"><strong>{t.interpretationResiduals}</strong></p>
               <ul className="list-disc list-inside mt-1 text-sm">
-                <li>ε<sub>t</sub> &gt; 1: Actual value is higher than predicted</li>
-                <li>ε<sub>t</sub> &lt; 1: Actual value is lower than predicted</li>
-                <li>ε<sub>t</sub> = 1: Perfect prediction</li>
+                <li>{t.higherThanPredicted}</li>
+                <li>{t.lowerThanPredicted}</li>
+                <li>{t.perfectPrediction}</li>
               </ul>
             </div>
           </div>
@@ -918,7 +1293,7 @@ const TimeSeriesAnalysis = () => {
         {/* 7. CVS series */}
         {activeTab === 'cvs' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Seasonally Adjusted Series (CVS)</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.seasonallyAdjusted}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={cvsData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -926,19 +1301,19 @@ const TimeSeriesAnalysis = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={2} name="Original sales" dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="cvs" stroke="#06b6d4" strokeWidth={3} name="CVS (deseasonalized)" dot={{ r: 5 }} />
+                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={2} name={language === 'fr' ? 'Ventes originales' : 'Original sales'} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="cvs" stroke="#06b6d4" strokeWidth={3} name={`CVS (${language === 'fr' ? 'désaisonnnalisée' : 'deseasonalized'})`} dot={{ r: 5 }} />
                 {showReestimated && (
-                  <Line type="monotone" dataKey="cvs" data={reestimatedData} stroke="#7c3aed" strokeWidth={2} name="CVS (re-estimated)" strokeDasharray="4 4" />
+                  <Line type="monotone" dataKey="cvs" data={reestimatedData} stroke="#7c3aed" strokeWidth={2} name={`CVS (${language === 'fr' ? 'ré-estimée' : 're-estimated'})`} strokeDasharray="4 4" />
                 )}
               </LineChart>
             </ResponsiveContainer>
             
-            <div className="mt-6 p-4 bg-cyan-50 rounded-lg">
-              <p className="font-bold">Multiplicative Deseasonalization:</p>
+            <div className="mt-6 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl border-2 border-cyan-200 shadow-lg">
+              <p className="font-bold">{t.multiplicativeDeseasonalization}</p>
               <p className="font-mono text-lg mt-2">CVS<sub>t</sub> = Y<sub>t</sub> / S<sub>t</sub></p>
-              <p className="mt-2">The CVS (Corrigée des Variations Saisonnières) series removes the seasonal effect by dividing by the seasonal index, revealing the underlying trend and random component.</p>
-              <p className="mt-2"><strong>Purpose:</strong> Allows comparison across different quarters without seasonal distortion.</p>
+              <p className="mt-2">{t.cvsSeriesRemoves}</p>
+              <p className="mt-2"><strong>{t.purposeLabel}</strong> {t.allowsComparison}</p>
             </div>
           </div>
         )}
@@ -946,7 +1321,7 @@ const TimeSeriesAnalysis = () => {
         {/* 8. 2022 Forecasts */}
         {activeTab === 'forecast' && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Forecasts for 2022 (Multiplicative Model)</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">{t.forecasts2022Title}</h2>
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={[...estimatedData, ...(showReestimated ? reestimatedData : []), ...forecastsOriginal, ...(showReestimated ? forecastsReestimated : [])]}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -954,10 +1329,10 @@ const TimeSeriesAnalysis = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={3} name="Actual sales" dot={{ r: 5 }} />
-                <Line type="monotone" dataKey="estimated" stroke="#10b981" strokeWidth={3} name="Estimated/Forecast (Ŷt = Tt×St)" strokeDasharray="5 5" dot={{ r: 5 }} />
+                <Line type="monotone" dataKey="sales" stroke="#8b5cf6" strokeWidth={3} name={t.actualSales} dot={{ r: 5 }} />
+                <Line type="monotone" dataKey="estimated" stroke="#10b981" strokeWidth={3} name={`${t.estimated}/${language === 'fr' ? 'Prévision' : 'Forecast'} (Ŷt = Tt×St)`} strokeDasharray="5 5" dot={{ r: 5 }} />
                 {showReestimated && (
-                  <Line type="monotone" dataKey="estimated" data={[...reestimatedData, ...forecastsReestimated]} stroke="#7c3aed" strokeWidth={2} name="Re-estimated Forecast" strokeDasharray="4 4" dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="estimated" data={[...reestimatedData, ...forecastsReestimated]} stroke="#7c3aed" strokeWidth={2} name={language === 'fr' ? 'Prévision Ré-estimée' : 'Re-estimated Forecast'} strokeDasharray="4 4" dot={{ r: 4 }} />
                 )}
               </LineChart>
             </ResponsiveContainer>
@@ -969,14 +1344,14 @@ const TimeSeriesAnalysis = () => {
                   <div className="text-xl md:text-2xl font-bold text-center mt-1 md:mt-2 text-red-600">
                     {Math.round(f.forecast)}
                   </div>
-                  <div className="text-xs md:text-sm text-center text-gray-600 mt-1">units</div>
+                  <div className="text-xs md:text-sm text-center text-gray-600 mt-1">{t.units}</div>
                   {f.lowerCI !== undefined && f.upperCI !== undefined && (
                     <div className="text-[10px] md:text-xs text-center text-gray-500 mt-1 md:mt-2 font-semibold">
-                      95% CI: [{Math.round(f.lowerCI)}, {Math.round(f.upperCI)}]
+                      {t.confidenceInterval}: [{Math.round(f.lowerCI)}, {Math.round(f.upperCI)}]
                     </div>
                   )}
                   <div className="text-[10px] md:text-xs text-center text-gray-500 mt-1">
-                    Trend × Seasonal
+                    {language === 'fr' ? 'Tendance × Saisonnier' : 'Trend × Seasonal'}
                   </div>
                 </div>
               ))}
@@ -989,27 +1364,27 @@ const TimeSeriesAnalysis = () => {
                     <div className="text-xl md:text-2xl font-bold text-center mt-1 md:mt-2 text-purple-700">
                       {Math.round(f.forecast)}
                     </div>
-                    <div className="text-xs md:text-sm text-center text-gray-600 mt-1">units</div>
+                    <div className="text-xs md:text-sm text-center text-gray-600 mt-1">{t.units}</div>
                     {f.lowerCI !== undefined && f.upperCI !== undefined && (
                       <div className="text-[10px] md:text-xs text-center text-gray-500 mt-1 md:mt-2 font-semibold">
-                        95% CI: [{Math.round(f.lowerCI)}, {Math.round(f.upperCI)}]
+                        {t.confidenceInterval}: [{Math.round(f.lowerCI)}, {Math.round(f.upperCI)}]
                       </div>
                     )}
                     <div className="text-[10px] md:text-xs text-center text-gray-500 mt-1">
-                      Re-estimated Trend × Seasonal
+                      {language === 'fr' ? 'Tendance Ré-estimée × Saisonnier' : 'Re-estimated Trend × Seasonal'}
                     </div>
                   </div>
                 ))}
               </div>
             )}
             
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="font-bold">Forecast Formula (Multiplicative):</p>
+            <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-lg">
+              <p className="font-bold">{t.forecastFormula}</p>
               <p className="font-mono text-lg mt-2">Ŷ<sub>t</sub> = T<sub>t</sub> × S<sub>t</sub></p>
-              <p className="mt-2">Where:</p>
+              <p className="mt-2">{t.whereLabel}:</p>
               <ul className="list-disc list-inside text-sm mt-1">
-                <li>T<sub>t</sub> = {trendB.toFixed(3)} + {trendA.toFixed(3)}t (linear trend)</li>
-                <li>S<sub>t</sub> = seasonal index for the corresponding quarter</li>
+                <li>T<sub>t</sub> = {trendB.toFixed(3)} + {trendA.toFixed(3)}t ({t.linearTrend})</li>
+                <li>S<sub>t</sub> = {t.seasonalIndexFor}</li>
               </ul>
             </div>
           </div>
@@ -1018,9 +1393,10 @@ const TimeSeriesAnalysis = () => {
 
       {/* Footer */}
       <div className="mt-4 md:mt-6 text-center text-xs md:text-sm text-gray-600">
-        <p>Time Series Analysis - Prof. Soumaya FELLAJI - Academic Year 2025/2026</p>
-        <p className="mt-1 md:mt-2 font-semibold text-indigo-700">Project managed by Mohamed Reda Touhami</p>
+        <p>{t.footerLine1}</p>
+        <p className="mt-1 md:mt-2 font-semibold text-indigo-700">{t.footerLine2}</p>
       </div>
+    </div>
     </div>
   );
 };
