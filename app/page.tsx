@@ -133,6 +133,32 @@ interface Translations {
   seasonalIndexFor: string;
   footerLine1: string;
   footerLine2: string;
+  discussionTab: string;
+  iterativeProcess: string;
+  iterativeDescription: string;
+  stoppingCriteria: string;
+  stoppingDescription: string;
+  additionalImprovements: string;
+  improvementsDescription: string;
+  nonLinearModels: string;
+  residualAutocorrelation: string;
+  outlierDetection: string;
+  arimaComparison: string;
+  flowchartTitle: string;
+  flowchartStep1: string;
+  flowchartStep2: string;
+  flowchartStep3: string;
+  flowchartStep4: string;
+  flowchartStep5: string;
+  convergenceAchieved: string;
+  algorithm: string;
+  step: string;
+  updateCoefficients: string;
+  reestimateTrend: string;
+  calculateNewCVS: string;
+  checkConvergence: string;
+  maxIterations: string;
+  MAEThreshold: string;
 }
 
 interface AccuracyMetrics {
@@ -282,6 +308,32 @@ const translations: Record<Language, Translations> = {
     seasonalIndexFor: "indice saisonnier pour le trimestre correspondant",
     footerLine1: "Analyse de Séries Temporelles - Prof. Soumaya FELLAJI - Année Académique 2025/2026",
     footerLine2: "Projet géré par Mohamed Reda Touhami",
+    discussionTab: "Discussion & Améliorations",
+    iterativeProcess: "🔄 Processus Itératif",
+    iterativeDescription: "Le modèle multiplicatif peut être raffiné en ré-estimant les coefficients saisonniers avec la nouvelle tendance, puis en recalculant la série CVS. Ce processus itératif améliore l'ajustement du modèle jusqu'à convergence.",
+    stoppingCriteria: "🛑 Critères d'Arrêt",
+    stoppingDescription: "L'algorithme converge lorsque le changement de MAE entre deux itérations est inférieur à 0.01, ou après N itérations maximum (généralement 10-20).",
+    additionalImprovements: "💡 Améliorations Supplémentaires",
+    improvementsDescription: "Pour renforcer l'analyse, considérez les extensions suivantes :",
+    nonLinearModels: "Modèles non-linéaires (exponentiels, logarithmiques)",
+    residualAutocorrelation: "Analyse d'autocorrélation des résidus (test Durbin-Watson)",
+    outlierDetection: "Détection et traitement des valeurs aberrantes",
+    arimaComparison: "Comparaison avec modèles ARIMA/SARIMA",
+    flowchartTitle: "Processus d'Optimisation Itérative",
+    flowchartStep1: "Tendance initiale",
+    flowchartStep2: "Coefficients saisonniers",
+    flowchartStep3: "Série CVS",
+    flowchartStep4: "Nouvelle tendance",
+    flowchartStep5: "Comparaison et convergence",
+    convergenceAchieved: "Convergence atteinte ✓",
+    algorithm: "Algorithme Détaillé",
+    step: "Étape",
+    updateCoefficients: "Ré-estimer les coefficients saisonniers à partir de la série CVS",
+    reestimateTrend: "Ré-estimer la tendance par décomposition",
+    calculateNewCVS: "Calculer la nouvelle série CVS",
+    checkConvergence: "Vérifier la convergence : ΔMAE < 0.01 ou N_iter ≥ N_max",
+    maxIterations: "Nombre maximum d'itérations",
+    MAEThreshold: "Seuil de changement MAE",
   },
   en: {
     title: "Time Series Analysis - Quarterly Sales (Multiplicative Model)",
@@ -398,6 +450,32 @@ const translations: Record<Language, Translations> = {
     seasonalIndexFor: "seasonal index for the corresponding quarter",
     footerLine1: "Time Series Analysis - Prof. Soumaya FELLAJI - Academic Year 2025/2026",
     footerLine2: "Project managed by Mohamed Reda Touhami",
+    discussionTab: "Discussion & Improvements",
+    iterativeProcess: "🔄 Iterative Process",
+    iterativeDescription: "The multiplicative model can be refined by re-estimating seasonal coefficients with the new trend, then recalculating the CVS series. This iterative process improves model fit until convergence.",
+    stoppingCriteria: "🛑 Stopping Criteria",
+    stoppingDescription: "The algorithm converges when the MAE change between two iterations is less than 0.01, or after maximum N iterations (typically 10-20).",
+    additionalImprovements: "💡 Additional Improvements",
+    improvementsDescription: "To strengthen the analysis, consider the following extensions:",
+    nonLinearModels: "Non-linear models (exponential, logarithmic)",
+    residualAutocorrelation: "Residual autocorrelation analysis (Durbin-Watson test)",
+    outlierDetection: "Outlier detection and treatment",
+    arimaComparison: "Comparison with ARIMA/SARIMA models",
+    flowchartTitle: "Iterative Optimization Process",
+    flowchartStep1: "Initial trend",
+    flowchartStep2: "Seasonal coefficients",
+    flowchartStep3: "CVS series",
+    flowchartStep4: "New trend",
+    flowchartStep5: "Comparison & convergence",
+    convergenceAchieved: "Convergence achieved ✓",
+    algorithm: "Detailed Algorithm",
+    step: "Step",
+    updateCoefficients: "Re-estimate seasonal coefficients from CVS series",
+    reestimateTrend: "Re-estimate trend by decomposition",
+    calculateNewCVS: "Calculate new CVS series",
+    checkConvergence: "Check convergence: ΔMAE < 0.01 or N_iter ≥ N_max",
+    maxIterations: "Maximum number of iterations",
+    MAEThreshold: "MAE change threshold",
   }
 };
 
@@ -408,6 +486,7 @@ const TimeSeriesAnalysis = () => {
   const [selectedMethod, setSelectedMethod] = useState<SeasonalMethodName>('ratio-to-moving-average');
   const [showReestimated, setShowReestimated] = useState(true);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showFormulas, setShowFormulas] = useState(false);
 
   const t = translations[language];
 
@@ -567,6 +646,26 @@ const TimeSeriesAnalysis = () => {
     mse: Math.round(metrics.mse * 100) / 100,
     rmse: Math.round(metrics.rmse * 100) / 100,
   });
+
+  const formatCoefficient = (value: number): string => value.toFixed(4);
+  const formatSales = (value: number): string => value.toFixed(2);
+  const formatAccuracyMetric = (value: number): string => value.toFixed(2);
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-lg border-2 border-indigo-500 shadow-lg">
+          <p className="font-semibold text-sm text-gray-800">{payload[0].payload.label || label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }} className="text-sm">
+              {entry.name}: {typeof entry.value === 'number' ? formatSales(entry.value) : entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   const calculateAccuracy = (coeffs: Record<QuarterId, number>): AccuracyMetrics => {
     const errors = originalData.map((d: { t: number; year: number; quarter: string; sales: number }) => {
@@ -729,10 +828,96 @@ const TimeSeriesAnalysis = () => {
   const copyTableToClipboard = (data: any[]) => {
     const text = JSON.stringify(data, null, 2);
     navigator.clipboard.writeText(text).then(() => {
-      alert('Data copied to clipboard!');
+      alert(language === 'fr' ? 'Données copiées !' : 'Data copied!');
     }).catch((err: Error) => {
-      console.error('Failed to copy:', err);
+      console.error(language === 'fr' ? 'Erreur : ' : 'Failed to copy: ', err);
     });
+  };
+
+  const exportToHTML = () => {
+    const reportHTML = `
+    <!DOCTYPE html>
+    <html lang="${language}">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${language === 'fr' ? 'Rapport - Analyse de Séries Temporelles' : 'Report - Time Series Analysis'}</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; color: #333; }
+        h1 { color: #4f46e5; text-align: center; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 40px; font-size: 14px; }
+        h2 { color: #5b21b6; border-bottom: 2px solid #5b21b6; padding-bottom: 10px; margin-top: 30px; }
+        h3 { color: #7c3aed; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #4f46e5; color: white; }
+        tr:nth-child(even) { background-color: #f5f5f5; }
+        .metric-box { background-color: #f9fafb; border-left: 4px solid #4f46e5; padding: 15px; margin: 10px 0; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background-color: #f0f4ff; border: 1px solid #d1d5db; padding: 15px; border-radius: 8px; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; text-align: center; }
+        .timestamp { color: #999; }
+      </style>
+    </head>
+    <body>
+      <h1>${language === 'fr' ? '📊 Analyse de Séries Temporelles' : '📊 Time Series Analysis'}</h1>
+      <div class="subtitle">${language === 'fr' ? 'Ventes Trimestrielles (2018-2021) - Modèle Multiplicatif' : 'Quarterly Sales (2018-2021) - Multiplicative Model'}</div>
+      
+      <h2>${language === 'fr' ? 'Résumé Exécutif' : 'Executive Summary'}</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>${language === 'fr' ? 'Méthode Sélectionnée' : 'Selected Method'}:</strong> ${selectedSeasonal.label}
+        </div>
+        <div class="card">
+          <strong>${language === 'fr' ? 'Produit des Indices' : 'Product of Indices'}:</strong> ${formatCoefficient(selectedSeasonal.product)}
+        </div>
+      </div>
+
+      <h2>${language === 'fr' ? 'Métriques de Précision' : 'Accuracy Metrics'}</h2>
+      <table>
+        <tr><th>${language === 'fr' ? 'Métrique' : 'Metric'}</th><th>${language === 'fr' ? 'Modèle Original' : 'Original Model'}</th><th>${language === 'fr' ? 'Modèle Ré-estimé' : 'Re-estimated Model'}</th></tr>
+        <tr><td>${t.bias}</td><td>${formatAccuracyMetric(accuracyMetrics.bias)}</td><td>${formatAccuracyMetric(reestimatedMetrics.bias)}</td></tr>
+        <tr><td>MAE</td><td>${formatAccuracyMetric(accuracyMetrics.mae)}</td><td>${formatAccuracyMetric(reestimatedMetrics.mae)}</td></tr>
+        <tr><td>MSE</td><td>${formatAccuracyMetric(accuracyMetrics.mse)}</td><td>${formatAccuracyMetric(reestimatedMetrics.mse)}</td></tr>
+        <tr><td>RMSE</td><td>${formatAccuracyMetric(accuracyMetrics.rmse)}</td><td>${formatAccuracyMetric(reestimatedMetrics.rmse)}</td></tr>
+      </table>
+
+      <h2>${language === 'fr' ? 'Indices Saisonniers' : 'Seasonal Indices'}</h2>
+      <table>
+        <tr><th>${t.quarter}</th><th>${language === 'fr' ? 'Coefficient' : 'Coefficient'}</th><th>${language === 'fr' ? 'Pourcentage' : 'Percentage'}</th></tr>
+        ${quarters.map(q => `<tr><td>${q}</td><td>${formatCoefficient(selectedSeasonal.coefficients[q])}</td><td>${(selectedSeasonal.coefficients[q] * 100).toFixed(2)}%</td></tr>`).join('')}
+      </table>
+
+      <h2>${language === 'fr' ? 'Prévisions 2022' : '2022 Forecasts'}</h2>
+      <table>
+        <tr><th>${t.quarter}</th><th>${language === 'fr' ? 'Prévision' : 'Forecast'}</th><th>${t.confidenceInterval}</th></tr>
+        ${forecastsOriginal.map(f => `<tr><td>${f.quarter}</td><td>${formatSales(f.forecast)}</td><td>[${formatSales(f.lowerCI || 0)}, ${formatSales(f.upperCI || 0)}]</td></tr>`).join('')}
+      </table>
+
+      <h2>${language === 'fr' ? 'Données de Base' : 'Base Data'}</h2>
+      <table>
+        <tr><th>t</th><th>${t.year}</th><th>${t.quarter}</th><th>${t.sales}</th><th>${t.trend}</th><th>${t.estimated}</th></tr>
+        ${estimatedData.slice(0, 8).map((row, i) => `<tr><td>${row.t}</td><td>${row.year}</td><td>${row.quarter}</td><td>${formatSales(row.sales || 0)}</td><td>${formatSales(row.trend || 0)}</td><td>${formatSales(row.estimated)}</td></tr>`).join('')}
+      </table>
+
+      <div class="footer">
+        <p><strong>${language === 'fr' ? 'Rapport généré' : 'Report generated'}:</strong> <span class="timestamp">${new Date().toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US')}</span></p>
+        <p>${t.footerLine1}</p>
+        <p>${t.footerLine2}</p>
+      </div>
+    </body>
+    </html>
+    `;
+
+    const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `time-series-report-${new Date().toISOString().split('T')[0]}.html`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -750,13 +935,22 @@ const TimeSeriesAnalysis = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-900 via-purple-900 to-violet-900 flex-1">
             {t.title}
           </h1>
-          <button
-            onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
-            className="ml-4 px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-indigo-300 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 font-bold text-indigo-700 text-sm"
-            title={language === 'fr' ? 'Switch to English' : 'Passer au français'}
-          >
-            {language === 'fr' ? 'EN' : 'FR'}
-          </button>
+          <div className="flex gap-2 ml-4">
+            <button
+              onClick={exportToHTML}
+              className="px-3 md:px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-emerald-300 rounded-lg shadow-md hover:shadow-lg transition-all hover:scale-105 font-bold text-emerald-700 text-xs md:text-sm"
+              title={language === 'fr' ? 'Exporter le rapport' : 'Export report'}
+            >
+              📥 {language === 'fr' ? 'Rapport' : 'Report'}
+            </button>
+            <button
+              onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+              className="px-4 py-2 bg-white/80 backdrop-blur-sm border-2 border-indigo-300 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 font-bold text-indigo-700 text-sm"
+              title={language === 'fr' ? 'Switch to English' : 'Passer au français'}
+            >
+              {language === 'fr' ? 'EN' : 'FR'}
+            </button>
+          </div>
         </div>
 
       {/* Method selection & toggles */}
@@ -889,7 +1083,7 @@ const TimeSeriesAnalysis = () => {
                 <div key={quarter} className="bg-white p-3 rounded-lg border-2 border-indigo-200">
                   <div className="font-bold text-center text-lg mb-2">{quarter}</div>
                   <div className="text-sm">Seasonal Index:</div>
-                  <div className="text-lg font-bold text-indigo-700 text-center">{(index * 100).toFixed(2)}%</div>
+                  <div className="text-lg font-bold text-indigo-700 text-center">{formatCoefficient(index)}</div>
                   <div className="text-xs text-gray-600 text-center mt-1">
                     {index > 1 ? `+${((index - 1) * 100).toFixed(2)}%` : `${((index - 1) * 100).toFixed(2)}%`}
                   </div>
@@ -923,8 +1117,99 @@ const TimeSeriesAnalysis = () => {
             </div>
           </div>
 
-          {/* Formulas */}
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Formulas Reference Section */}
+          <div className="mt-6 bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl border-2 border-slate-300 shadow-lg overflow-hidden">
+            <button
+              onClick={() => setShowFormulas(!showFormulas)}
+              className="w-full p-4 flex justify-between items-center bg-gradient-to-r from-slate-600 to-gray-600 text-white hover:from-slate-700 hover:to-gray-700 transition-all"
+            >
+              <h3 className="font-bold text-lg">📐 {language === 'fr' ? 'Référence des Formules' : 'Formulas Reference'}</h3>
+              <span className="text-2xl">{showFormulas ? '▼' : '▶'}</span>
+            </button>
+            
+            {showFormulas && (
+              <div className="p-6 space-y-6">
+                {/* Trend Formulas */}
+                <div className="bg-gradient-to-br from-red-50 to-rose-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="font-bold text-red-800 mb-3">📈 {language === 'fr' ? 'Tendance (Moindres Carrés)' : 'Trend (Least Squares)'}</h4>
+                  <div className="space-y-2 text-sm font-mono bg-white p-3 rounded border border-red-200">
+                    <p><strong>a</strong> = Σ(t<sub>i</sub> - t̄)(Y<sub>i</sub> - Ȳ) / Σ(t<sub>i</sub> - t̄)²</p>
+                    <p><strong>b</strong> = Ȳ - a·t̄</p>
+                    <p><strong>T<sub>t</sub></strong> = b + a·t</p>
+                    <p className="mt-2 text-gray-700">{language === 'fr' ? 'Valeurs observées :' : 'Observed values:'} a = {trendA.toFixed(2)}, b = {trendB.toFixed(2)}</p>
+                  </div>
+                </div>
+
+                {/* Multiplicative Model */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="font-bold text-blue-800 mb-3">⚙️ {language === 'fr' ? 'Modèle Multiplicatif' : 'Multiplicative Model'}</h4>
+                  <div className="space-y-2 text-sm font-mono bg-white p-3 rounded border border-blue-200">
+                    <p><strong>Y<sub>t</sub></strong> = T<sub>t</sub> × S<sub>t</sub> × ε<sub>t</sub></p>
+                    <p><strong>Ŷ<sub>t</sub></strong> = T<sub>t</sub> × S<sub>t</sub></p>
+                    <p><strong>ε<sub>t</sub></strong> = Y<sub>t</sub> / Ŷ<sub>t</sub></p>
+                    <p className="mt-2 text-gray-700">{language === 'fr' ? 'où T = tendance, S = saisonnier, ε = résidu' : 'where T = trend, S = seasonal, ε = residual'}</p>
+                  </div>
+                </div>
+
+                {/* Seasonal Methods */}
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-4 rounded-lg border-l-4 border-purple-500">
+                  <h4 className="font-bold text-purple-800 mb-3">🔄 {language === 'fr' ? 'Méthodes Saisonnières' : 'Seasonal Methods'}</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded border border-purple-200">
+                      <p className="font-semibold text-sm mb-1">1. {t.simpleAverages}</p>
+                      <p className="text-xs font-mono">S<sub>t</sub> = moyenne(Y<sub>i</sub> / T<sub>i</sub>) {language === 'fr' ? 'par trimestre' : 'per quarter'}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded border border-purple-200">
+                      <p className="font-semibold text-sm mb-1">2. {t.ratioToTrend}</p>
+                      <p className="text-xs font-mono">{language === 'fr' ? 'Identique à méthode 1' : 'Identical to method 1'}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded border border-purple-200">
+                      <p className="font-semibold text-sm mb-1">3. {t.ratioToMovingAverage}</p>
+                      <p className="text-xs font-mono">S<sub>t</sub> = moyenne(Y<sub>i</sub> / MMc4<sub>i</sub>) {language === 'fr' ? 'par trimestre' : 'per quarter'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 bg-white p-3 rounded border border-purple-200">
+                    <p className="font-semibold text-sm mb-1">⚖️ {language === 'fr' ? 'Correction du produit' : 'Product correction'}</p>
+                    <p className="text-xs font-mono">S<sub>t</sub> {language === 'fr' ? 'corrigé' : 'adjusted'} = S<sub>t</sub> × (1 / Π S<sub>i</sub>)<sup>1/4</sup></p>
+                    <p className="text-xs text-gray-600 mt-1">{language === 'fr' ? 'Garantit: Π S<sub>i</sub> = 1' : 'Ensures: Π S<sub>i</sub> = 1'}</p>
+                  </div>
+                </div>
+
+                {/* CVS */}
+                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 rounded-lg border-l-4 border-cyan-500">
+                  <h4 className="font-bold text-cyan-800 mb-3">💧 {language === 'fr' ? 'Série CVS (Désaisonnalisée)' : 'CVS Series (Deseasonalized)'}</h4>
+                  <div className="space-y-2 text-sm font-mono bg-white p-3 rounded border border-cyan-200">
+                    <p><strong>CVS<sub>t</sub></strong> = Y<sub>t</sub> / S<sub>t</sub></p>
+                    <p className="mt-2 text-gray-700">{language === 'fr' ? 'Contient: tendance + résidus' : 'Contains: trend + residuals'}</p>
+                  </div>
+                </div>
+
+                {/* Accuracy Metrics */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="font-bold text-green-800 mb-3">📊 {language === 'fr' ? 'Métriques de Précision' : 'Accuracy Metrics'}</h4>
+                  <div className="space-y-2 text-sm font-mono bg-white p-3 rounded border border-green-200">
+                    <p><strong>Biais:</strong> (1/n)·Σ(Ŷ<sub>t</sub> - Y<sub>t</sub>)</p>
+                    <p><strong>MAE:</strong> (1/n)·Σ|Ŷ<sub>t</sub> - Y<sub>t</sub>|</p>
+                    <p><strong>MSE:</strong> (1/n)·Σ(Ŷ<sub>t</sub> - Y<sub>t</sub>)²</p>
+                    <p><strong>RMSE:</strong> √MSE</p>
+                    <p className="mt-2 text-gray-700 normal">{language === 'fr' ? '⬇️ Valeurs basses = meilleur ajustement' : '⬇️ Lower values = better fit'}</p>
+                  </div>
+                </div>
+
+                {/* Moving Average */}
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-lg border-l-4 border-orange-500">
+                  <h4 className="font-bold text-orange-800 mb-3">📈 {language === 'fr' ? 'Moyenne Mobile Centrée' : 'Centered Moving Average'}</h4>
+                  <div className="space-y-2 text-sm font-mono bg-white p-3 rounded border border-orange-200">
+                    <p><strong>MM4<sub>t</sub></strong> = (Y<sub>t-1</sub> + Y<sub>t</sub> + Y<sub>t+1</sub> + Y<sub>t+2</sub>) / 4</p>
+                    <p><strong>MMc4<sub>t</sub></strong> = (MM4<sub>t</sub> + MM4<sub>t+1</sub>) / 2</p>
+                    <p className="mt-2 text-gray-700 normal">{language === 'fr' ? 'Lisse les données trimestrielles' : 'Smooths quarterly data'}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 shadow-lg">
                 <h4 className="font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">{t.mainFormulas}</h4>
                 <div className="space-y-2 text-sm">
@@ -970,6 +1255,7 @@ const TimeSeriesAnalysis = () => {
           { id: 'residuals', label: t.residualsTab },
           { id: 'cvs', label: t.cvsSeriesTab },
           { id: 'forecast', label: t.forecastTab },
+          { id: 'discussion', label: t.discussionTab },
         ].map(tab => (
           <button
             key={tab.id}
@@ -1110,13 +1396,13 @@ const TimeSeriesAnalysis = () => {
               {seasonalMethods.map(m => (
                 <div key={m.name} className="p-4 rounded-xl border-2 shadow-lg bg-gradient-to-br from-white to-indigo-50 hover:shadow-xl transition-shadow" style={{ borderColor: '#e0e7ff' }}>
                   <div className="font-bold text-indigo-700 mb-2">{m.label}</div>
-                  <div className="text-xs text-gray-600">{t.product}: {m.product.toFixed(4)}</div>
-                  <div className="text-xs text-gray-600">{t.correction}: {m.correctionFactor.toFixed(6)}</div>
+                  <div className="text-xs text-gray-600">{t.product}: {formatCoefficient(m.product)}</div>
+                  <div className="text-xs text-gray-600">{t.correction}: {formatCoefficient(m.correctionFactor)}</div>
                   <div className="grid grid-cols-2 gap-2 mt-3 text-sm">
                     {quarters.map(q => (
                       <div key={`${m.name}-${q}`} className="flex justify-between">
                         <span className="font-semibold">{q}</span>
-                        <span>{(m.coefficients[q] * 100).toFixed(2)}%</span>
+                        <span>{formatCoefficient(m.coefficients[q])} ({(m.coefficients[q] * 100).toFixed(2)}%)</span>
                       </div>
                     ))}
                   </div>
@@ -1167,10 +1453,10 @@ const TimeSeriesAnalysis = () => {
                           {m.label}
                           {isSelected && <span className="ml-2 text-purple-600">{t.selected}</span>}
                         </td>
-                        <td className="border border-indigo-300 px-4 py-3 text-center">{m.accuracy.bias}</td>
-                        <td className="border border-indigo-300 px-4 py-3 text-center font-semibold">{m.accuracy.mae}</td>
-                        <td className="border border-indigo-300 px-4 py-3 text-center">{m.accuracy.mse}</td>
-                        <td className="border border-indigo-300 px-4 py-3 text-center">{m.accuracy.rmse}</td>
+                        <td className="border border-indigo-300 px-4 py-3 text-center">{formatAccuracyMetric(m.accuracy.bias)}</td>
+                        <td className="border border-indigo-300 px-4 py-3 text-center font-semibold">{formatAccuracyMetric(m.accuracy.mae)}</td>
+                        <td className="border border-indigo-300 px-4 py-3 text-center">{formatAccuracyMetric(m.accuracy.mse)}</td>
+                        <td className="border border-indigo-300 px-4 py-3 text-center">{formatAccuracyMetric(m.accuracy.rmse)}</td>
                         <td className="border border-indigo-300 px-4 py-3 text-center">
                           {isBest && <span className="bg-green-200 text-green-800 px-2 py-1 rounded font-bold text-sm">{t.bestMAE}</span>}
                         </td>
@@ -1187,10 +1473,10 @@ const TimeSeriesAnalysis = () => {
                 <div className="space-y-2 text-sm">
                   <p>{t.selectedMethodLabel}: <span className="font-bold text-indigo-700">{selectedSeasonal.label}</span></p>
                   <div className="grid grid-cols-2 gap-2 mt-2">
-                    <div>Bias: <span className="font-bold">{accuracyMetrics.bias}</span></div>
-                    <div>MAE: <span className="font-bold">{accuracyMetrics.mae}</span></div>
-                    <div>MSE: <span className="font-bold">{accuracyMetrics.mse}</span></div>
-                    <div>RMSE: <span className="font-bold">{accuracyMetrics.rmse}</span></div>
+                    <div>{t.bias}: <span className="font-bold">{formatAccuracyMetric(accuracyMetrics.bias)}</span></div>
+                    <div>MAE: <span className="font-bold">{formatAccuracyMetric(accuracyMetrics.mae)}</span></div>
+                    <div>MSE: <span className="font-bold">{formatAccuracyMetric(accuracyMetrics.mse)}</span></div>
+                    <div>RMSE: <span className="font-bold">{formatAccuracyMetric(accuracyMetrics.rmse)}</span></div>
                   </div>
                 </div>
               </div>
@@ -1200,10 +1486,10 @@ const TimeSeriesAnalysis = () => {
                 <div className="space-y-2 text-sm">
                   <p>{t.trendRefitted}</p>
                   <div className="grid grid-cols-2 gap-2 mt-2">
-                    <div>Bias: <span className="font-bold">{reestimatedMetrics.bias}</span></div>
-                    <div>MAE: <span className="font-bold">{reestimatedMetrics.mae}</span></div>
-                    <div>MSE: <span className="font-bold">{reestimatedMetrics.mse}</span></div>
-                    <div>RMSE: <span className="font-bold">{reestimatedMetrics.rmse}</span></div>
+                    <div>{t.bias}: <span className="font-bold">{formatAccuracyMetric(reestimatedMetrics.bias)}</span></div>
+                    <div>MAE: <span className="font-bold">{formatAccuracyMetric(reestimatedMetrics.mae)}</span></div>
+                    <div>MSE: <span className="font-bold">{formatAccuracyMetric(reestimatedMetrics.mse)}</span></div>
+                    <div>RMSE: <span className="font-bold">{formatAccuracyMetric(reestimatedMetrics.rmse)}</span></div>
                   </div>
                   <div className="mt-2 text-xs text-purple-700 font-semibold">
                     {reestimatedMetrics.mae < accuracyMetrics.mae ? t.betterFitCVS : t.originalMoreAccurate}
@@ -1378,13 +1664,205 @@ const TimeSeriesAnalysis = () => {
               </div>
             )}
             
-            <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-lg">
-              <p className="font-bold">{t.forecastFormula}</p>
-              <p className="font-mono text-lg mt-2">Ŷ<sub>t</sub> = T<sub>t</sub> × S<sub>t</sub></p>
-              <p className="mt-2">{t.whereLabel}:</p>
-              <ul className="list-disc list-inside text-sm mt-1">
-                <li>T<sub>t</sub> = {trendB.toFixed(3)} + {trendA.toFixed(3)}t ({t.linearTrend})</li>
-                <li>S<sub>t</sub> = {t.seasonalIndexFor}</li>
+        {/* 9. Discussion & Improvements (Q17) */}
+        {activeTab === 'discussion' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-700">
+              {language === 'fr' ? 'Discussion et Question 17' : 'Discussion and Question 17'}
+            </h2>
+
+            {/* Iterative Process Card */}
+            <div className="mb-6 p-6 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border-2 border-purple-200 shadow-lg">
+              <h3 className="font-bold text-xl mb-3 flex items-center gap-2 text-purple-800">
+                {t.iterativeProcess}
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">{t.iterativeDescription}</p>
+              
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 bg-white/80 p-3 rounded-lg">
+                  <span className="text-2xl">1️⃣</span>
+                  <div>
+                    <p className="font-semibold text-sm">Tendance Initiale / Initial Trend</p>
+                    <p className="text-xs text-gray-600">T<sub>t</sub> = {trendB.toFixed(3)} + {trendA.toFixed(3)}t</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-white/80 p-3 rounded-lg">
+                  <span className="text-2xl">2️⃣</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.updateCoefficients}</p>
+                    <p className="text-xs text-gray-600">S<sub>t</sub> = moyenne(Yt / MMc4<sub>t</sub>) par trimestre</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-white/80 p-3 rounded-lg">
+                  <span className="text-2xl">3️⃣</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.calculateNewCVS}</p>
+                    <p className="text-xs text-gray-600">CVS<sub>t</sub> = Yt / S<sub>t</sub></p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-white/80 p-3 rounded-lg">
+                  <span className="text-2xl">4️⃣</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.reestimateTrend}</p>
+                    <p className="text-xs text-gray-600">T<sub>t</sub> = MCO(CVS<sub>t</sub>)</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-white/80 p-3 rounded-lg">
+                  <span className="text-2xl">5️⃣</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.checkConvergence}</p>
+                    <p className="text-xs text-gray-600">Itérer jusqu'à ΔMAE &lt; 0.01</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stopping Criteria Card */}
+            <div className="mb-6 p-6 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border-2 border-red-200 shadow-lg">
+              <h3 className="font-bold text-xl mb-3 flex items-center gap-2 text-red-800">
+                {t.stoppingCriteria}
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">{t.stoppingDescription}</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white/80 p-4 rounded-lg border-l-4 border-red-500">
+                  <p className="font-semibold text-sm mb-1">{t.MAEThreshold}</p>
+                  <p className="text-lg font-bold text-red-700">ΔMAE &lt; 0.01</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {language === 'fr' ? 'Changement du MAE entre deux itérations' : 'MAE change between iterations'}
+                  </p>
+                </div>
+                <div className="bg-white/80 p-4 rounded-lg border-l-4 border-orange-500">
+                  <p className="font-semibold text-sm mb-1">{t.maxIterations}</p>
+                  <p className="text-lg font-bold text-orange-700">N ≤ 20</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {language === 'fr' ? 'Arrêter après 20 itérations maximum' : 'Stop after maximum 20 iterations'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Improvements Card */}
+            <div className="mb-6 p-6 bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl border-2 border-emerald-200 shadow-lg">
+              <h3 className="font-bold text-xl mb-3 flex items-center gap-2 text-emerald-800">
+                {t.additionalImprovements}
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">{t.improvementsDescription}</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-start gap-2 bg-white/80 p-3 rounded-lg">
+                  <span className="text-xl">📈</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.nonLinearModels}</p>
+                    <p className="text-xs text-gray-600">Log(Yt) = log(Tt) + log(St) + log(εt)</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 bg-white/80 p-3 rounded-lg">
+                  <span className="text-xl">🔗</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.residualAutocorrelation}</p>
+                    <p className="text-xs text-gray-600">Durbin-Watson: d ∈ [1.5, 2.5]</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 bg-white/80 p-3 rounded-lg">
+                  <span className="text-xl">🎯</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.outlierDetection}</p>
+                    <p className="text-xs text-gray-600">{language === 'fr' ? 'Méthode de Tukey (IQR)' : 'Tukey method (IQR)'}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 bg-white/80 p-3 rounded-lg">
+                  <span className="text-xl">🔄</span>
+                  <div>
+                    <p className="font-semibold text-sm">{t.arimaComparison}</p>
+                    <p className="text-xs text-gray-600">ARIMA(p,d,q) × (P,D,Q)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Algorithm Flowchart */}
+            <div className="mb-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-lg">
+              <h3 className="font-bold text-xl mb-4 text-blue-800">{t.algorithm}</h3>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 bg-white/80 p-3 rounded-lg text-center font-semibold text-sm border-2 border-blue-300">
+                    {t.flowchartStep1}
+                  </div>
+                  <div className="mx-2 text-2xl">→</div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 bg-white/80 p-3 rounded-lg text-center font-semibold text-sm border-2 border-purple-300">
+                    {t.flowchartStep2}
+                  </div>
+                  <div className="mx-2 text-2xl">→</div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 bg-white/80 p-3 rounded-lg text-center font-semibold text-sm border-2 border-indigo-300">
+                    {t.flowchartStep3}
+                  </div>
+                  <div className="mx-2 text-2xl">→</div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 bg-white/80 p-3 rounded-lg text-center font-semibold text-sm border-2 border-violet-300">
+                    {t.flowchartStep4}
+                  </div>
+                  <div className="mx-2 text-2xl">→</div>
+                </div>
+
+                <div className="flex items-center">
+                  <div className="flex-1 bg-gradient-to-r from-green-200 to-emerald-200 p-3 rounded-lg text-center font-bold text-sm border-2 border-green-500">
+                    {t.convergenceAchieved}
+                  </div>
+                </div>
+
+                <div className="mt-3 p-3 bg-white/80 rounded-lg border-2 border-dashed border-blue-300 text-xs text-gray-700">
+                  <p className="font-semibold mb-1">⚙️ {language === 'fr' ? 'Critère' : 'Criterion'}:</p>
+                  <p>ΔMAE(i) = |MAE(i) - MAE(i-1)| &lt; 0.01</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Summary Box */}
+            <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-300 shadow-lg">
+              <h3 className="font-bold text-lg mb-3">📊 {language === 'fr' ? 'Résumé' : 'Summary'}</h3>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-start gap-2">
+                  <span>✅</span>
+                  <span>
+                    {language === 'fr'
+                      ? 'Le processus itératif affine le modèle multiplicatif'
+                      : 'The iterative process refines the multiplicative model'}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span>✅</span>
+                  <span>
+                    {language === 'fr'
+                      ? 'Converge rapidement (généralement 3-5 itérations)'
+                      : 'Converges quickly (typically 3-5 iterations)'}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span>✅</span>
+                  <span>
+                    {language === 'fr'
+                      ? 'Améliore la précision de prévision'
+                      : 'Improves forecast accuracy'}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span>✅</span>
+                  <span>
+                    {language === 'fr'
+                      ? 'Peut être combiné avec d\'autres techniques (ARIMA, ML)'
+                      : 'Can be combined with other techniques (ARIMA, ML)'}
+                  </span>
+                </li>
               </ul>
             </div>
           </div>
