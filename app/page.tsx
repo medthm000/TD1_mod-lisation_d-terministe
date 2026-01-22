@@ -1679,7 +1679,10 @@ const TimeSeriesAnalysis = () => {
                 ))}
               </div>
             )}
-            
+
+          </div>
+        )}
+
         {/* 9. Discussion & Improvements (Q17) */}
         {activeTab === 'discussion' && (
           <div>
